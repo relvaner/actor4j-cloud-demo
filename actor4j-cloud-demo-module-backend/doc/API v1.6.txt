@@ -1,0 +1,714 @@
+---
+GET localhost:8080/health
+
+Description
+	Checks if Actor4j is still responsive (Health Check)
+
+Response
+{
+    "checks": [
+        {
+            "id": "actor4j",
+            "status": "UP"
+        }
+    ],
+    "outcome": "UP"
+}
+
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Simple Ping-Request, reponse with "pong"
+
+Request
+{
+    "alias":"ping",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : "pong",
+  "message" : ""
+}
+---
+
+---
+	CartService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Stores the items in the user's shopping cart in Redis and retrieves it.
+	
+POD_REQUEST GET
+Request
+{
+    "alias":"CartService",
+    "tag":"0",
+    "authentication":"123456",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : {
+    "user_id" : "123456",
+    "items" : [ {
+      "product_id" : "1234567",
+      "quantity" : 23
+    } ]
+  },
+  "message" : ""
+}
+
+---
+
+POD_REQUEST POST
+Request
+{
+    "alias":"CartService",
+    "payload": {  
+        "product_id":"1234567", 
+        "quantity":23
+    },
+    "authentication":"123456",
+    "tag":"2",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Accepted",
+    "code" : 202
+  },
+  "data" : null,
+  "message" : ""
+}
+
+---
+
+POD_REQUEST DELETE
+Request
+{
+    "alias":"CartService",
+    "tag":"4",
+    "authentication":"123456",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Accepted",
+    "code" : 202
+  },
+  "data" : null,
+  "message" : ""
+}
+
+---
+	ProductCatalogService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Provides the list of products from a JSON file and ability to search products 
+	and get individual products.
+
+POD_REQUEST GET
+Request
+{
+    "alias":"ProductCatalogService",
+    "payload":"OLJCESPC7Z",
+    "tag":"0",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : {
+    "id" : "OLJCESPC7Z",
+    "name" : "Vintage Typewriter",
+    "description" : "This typewriter looks good in your living room.",
+    "picture" : "/static/img/products/typewriter.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 67,
+      "nanos" : 990000000
+    },
+    "categories" : [ "vintage" ]
+  },
+  "message" : ""
+}
+
+---
+
+POD_REQUEST GET_ALL
+Request
+{
+    "alias":"ProductCatalogService",
+    "tag":"1",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ {
+    "id" : "OLJCESPC7Z",
+    "name" : "Vintage Typewriter",
+    "description" : "This typewriter looks good in your living room.",
+    "picture" : "/static/img/products/typewriter.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 67,
+      "nanos" : 990000000
+    },
+    "categories" : [ "vintage" ]
+  }, {
+    "id" : "66VCHSJNUP",
+    "name" : "Vintage Camera Lens",
+    "description" : "You won't have a camera to use it and it probably doesn't work anyway.",
+    "picture" : "/static/img/products/camera-lens.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 12,
+      "nanos" : 490000000
+    },
+    "categories" : [ "photography", "vintage" ]
+  },
+  ...
+  
+---
+
+POD_REQUEST ACTION_1 (SEARCH_BY_NAME_OR_DESCRIPTION)
+Request
+{
+    "alias":"ProductCatalogService",
+    "payload":"Camera",
+    "tag":"11",
+    "reply":"true"
+}	
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ {
+    "id" : "66VCHSJNUP",
+    "name" : "Vintage Camera Lens",
+    "description" : "You won't have a camera to use it and it probably doesn't work anyway.",
+    "picture" : "/static/img/products/camera-lens.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 12,
+      "nanos" : 490000000
+    },
+    "categories" : [ "photography", "vintage" ]
+  }, {
+    "id" : "2ZYFJ3GM2N",
+    "name" : "Film Camera",
+    "description" : "This camera looks like it's a film camera, but it's actually digital.",
+    "picture" : "/static/img/products/film-camera.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 2245,
+      "nanos" : 0
+    },
+    "categories" : [ "photography", "vintage" ]
+  } ],
+  "message" : ""
+}
+
+---
+
+POD_REQUEST ACTION_2 (SEARCH_BY_CATEGORY)
+Request
+{
+    "alias":"ProductCatalogService",
+    "payload":"vintage",
+    "tag":"12",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ {
+    "id" : "OLJCESPC7Z",
+    "name" : "Vintage Typewriter",
+    "description" : "This typewriter looks good in your living room.",
+    "picture" : "/static/img/products/typewriter.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 67,
+      "nanos" : 990000000
+    },
+    "categories" : [ "vintage" ]
+  }, {
+    "id" : "66VCHSJNUP",
+    "name" : "Vintage Camera Lens",
+    "description" : "You won't have a camera to use it and it probably doesn't work anyway.",
+    "picture" : "/static/img/products/camera-lens.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 12,
+      "nanos" : 490000000
+    },
+    "categories" : [ "photography", "vintage" ]
+  }, {
+    "id" : "2ZYFJ3GM2N",
+    "name" : "Film Camera",
+    "description" : "This camera looks like it's a film camera, but it's actually digital.",
+    "picture" : "/static/img/products/film-camera.jpg",
+    "price_Usd" : {
+      "currency_code" : "USD",
+      "units" : 2245,
+      "nanos" : 0
+    },
+    "categories" : [ "photography", "vintage" ]
+  }, {
+    "id" : "0PUK6V6EV0",
+    "name" : "Vintage Record Player",
+    "description" : "It still works.",
+    "picture" : "/static/img/products/record-player.jpg",
+    "price_usd" : {
+      "currency_code" : "USD",
+      "units" : 65,
+      "nanos" : 500000000
+    },
+    "categories" : [ "music", "vintage" ]
+  } ],
+  "message" : ""
+}
+
+---
+	CurrencyService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Converts one money amount to another currency. Uses real values fetched 
+	from European Central Bank. It's the highest QPS service.
+	
+POD_REQUEST GET_ALL
+Request
+{
+    "alias":"CurrencyService",
+    "tag":"1",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "EUR", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "ISK", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "USD", "ZAR" ],
+  "message" : ""
+}
+
+---
+
+POD_REQUEST ACTION_1 (CONVERT_BY_CURRENCY)
+Request
+{
+    "alias":"CurrencyService",
+    "payload":{"currencyCode":"USD", "price":{"currencyCode":"EUR", "units": 11, "nanos":900000000}},
+    "tag":"11",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : {
+    "currency_code" : "USD",
+    "units" : 14,
+    "nanos" : 104840000
+  },
+  "message" : ""
+}
+
+---
+	PaymentService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Charges the given credit card info (mock) with the given amount and returns a transaction ID.
+	
+POD_REQUEST POST (INTERNAL USAGE ONLY)
+Request
+{
+    "alias":"PaymentService",
+    "payload": {"credit_card": {"credit_card_number": "4242424242424242", "credit_card_expiration_year":2022, "credit_card_expiration_month":12}},
+    "tag":"2",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : "b9ab9f79-fdf0-4f21-8b1f-4cbad900dbdc",
+  "message" : ""
+}
+	
+---
+	ShippingService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)
+	
+POD_REQUEST ACTION_1 (QUOTE)
+Request
+{
+    "alias":"ShippingService",
+    "payload": {
+    	"items": [{  
+        	"product_id":"888888", 
+        	"quantity":2
+    	}]
+    },
+    "tag":"11",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : {
+    "currency_code" : "USD",
+    "units" : 6,
+    "nanos" : 660000000
+  },
+  "message" : ""
+}
+
+---
+
+POD_REQUEST POST (INTERNAL USAGE ONLY)
+Request
+{
+    "alias":"ShippingService",
+    "payload": {"address": {"street_address": "Maxstr", "city":"Emden", "state":"Germany"}},
+    "tag":"2",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : "MB-20620-105506815",
+  "message" : ""
+}
+	
+---
+	EmailService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Sends users an order confirmation email (mock).
+
+Request
+{
+    "alias":"EmailService",
+    "payload":"test@test.de",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : null,
+  "message" : ""
+}
+
+---
+	CheckoutService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Retrieves user cart, prepares order and orchestrates the payment, shipping and the email notification.
+
+POD_REQUEST POST
+Request
+{
+    "alias":"CheckoutService",
+    "payload": {
+        "user_currency": "USD",
+        "address": {"street_address": "Maxstr", "city":"Emden", "state":"Lower Saxony", "country": "Germany", "zip_code": 223},
+        "email": "test@test.de", 
+        "credit_card": {"credit_card_number": "4242424242424242", "credit_card_expiration_year":2022, "credit_card_expiration_month":12}
+    },
+    "authentication":"123456",
+    "tag":"2",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : {
+    "order_id" : "765d101e-ad54-4b54-9110-762cefe80f86",
+    "shipping_tracking_id" : "FY-25974-128468180",
+    "shipping_cost" : {
+      "currency_code" : "USD",
+      "units" : 24,
+      "nanos" : 400000000
+    },
+    "total_cost" : {
+      "currency_code" : "USD",
+      "units" : 472,
+      "nanos" : 700000000
+    },
+    "shipping_address" : null,
+    "items" : [ {
+      "item" : {
+        "product_id" : "OLJCESPC7Z",
+        "quantity" : 5
+      },
+      "cost" : {
+        "currency_code" : "USD",
+        "units" : 66,
+        "nanos" : 990000000
+      }
+    }, {
+      "item" : {
+        "product_id" : "L9ECAV7KIM",
+        "quantity" : 3
+      },
+      "cost" : {
+        "currency_code" : "USD",
+        "units" : 35,
+        "nanos" : 450000000
+      }
+    } ]
+  },
+  "message" : ""
+}
+
+---
+	RecomendationService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Recommends other products based on what's given in the cart.
+
+POD_REQUEST GET_ALL
+Request
+{
+    "alias":"RecomendationService",
+    "payload":["1YMWWN1N4O", "OLJCESPC7Z"],
+    "tag":"1",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ "0PUK6V6EV0", "LS4PSXUNUM", "L9ECAV7KIM", "66VCHSJNUP", "66VCHSJNUP" ],
+  "message" : ""
+}
+
+---
+	AdService
+---
+POST localhost:8080/actors
+HEADER Content-Type application-json
+
+Description
+	Provides text ads based on given context words.
+
+POD_REQUEST GET_ALL
+Request
+{
+    "alias":"AdService",
+    "tag":"1",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ {
+    "redirect_url" : "/product/2ZYFJ3GM2N",
+    "text" : "Film camera for sale. 50% off."
+  }, {
+    "redirect_url" : "/product/66VCHSJNUP",
+    "text" : "Vintage camera lens for sale. 20% off."
+  }, {
+    "redirect_url" : "/product/0PUK6V6EV0",
+    "text" : "Vintage record player for sale. 30% off."
+  }, {
+    "redirect_url" : "/product/9SIQT8TOJO",
+    "text" : "City Bike for sale. 10% off."
+  }, {
+    "redirect_url" : "/product/1YMWWN1N4O",
+    "text" : "Home Barista kitchen kit for sale. Buy one, get second kit for free"
+  }, {
+    "redirect_url" : "/product/6E92ZMYYFZ",
+    "text" : "Air plants for sale. Buy two, get third one for free"
+  }, {
+    "redirect_url" : "/product/L9ECAV7KIM",
+    "text" : "Terrarium for sale. Buy one, get second one for free"
+  } ],
+  "message" : ""
+}
+
+---
+
+POD_REQUEST ACTION_1 (SEARCH_BY_CATEGORY) 
+Request
+{
+    "alias":"AdService",
+    "payload":"vintage",
+    "tag":"11",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ {
+    "redirect_url" : "/product/2ZYFJ3GM2N",
+    "text" : "Film camera for sale. 50% off."
+  }, {
+    "redirect_url" : "/product/66VCHSJNUP",
+    "text" : "Vintage camera lens for sale. 20% off."
+  }, {
+    "redirect_url" : "/product/0PUK6V6EV0",
+    "text" : "Vintage record player for sale. 30% off."
+  } ],
+  "message" : ""
+}
+
+---
+
+POD_REQUEST ACTION_2 (RANDOM_ADS) 
+Request
+{
+    "alias":"AdService",
+    "tag":"12",
+    "reply":"true"
+}
+
+Response
+{
+  "status" : "success",
+  "code" : 200,
+  "pod" : {
+    "status" : "Ok",
+    "code" : 200
+  },
+  "data" : [ {
+    "redirect_url" : "/product/L9ECAV7KIM",
+    "text" : "Terrarium for sale. Buy one, get second one for free"
+  }, {
+    "redirect_url" : "/product/1YMWWN1N4O",
+    "text" : "Home Barista kitchen kit for sale. Buy one, get second kit for free"
+  } ],
+  "message" : ""
+}
+---

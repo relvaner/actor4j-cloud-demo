@@ -1,0 +1,19 @@
+version: '3.1'
+services:
+  nginx_gateway:
+    image: nginx_gateway
+    restart: always
+    ports:
+      - "80:80"
+  frontend:
+    image: frontend
+    environment:
+      - ACTOR4J_CLOUD_DOCKER=true
+      - ACTOR4J_CLOUD_CONTEXT_PATH=/demo
+    restart: always
+  backend:
+    image: backend
+    environment:
+      - ACTOR4J_CLOUD_DOCKER=true
+      - ACTOR4J_CLOUD_CONTEXT_PATH_FRONTEND=/demo
+    restart: always
