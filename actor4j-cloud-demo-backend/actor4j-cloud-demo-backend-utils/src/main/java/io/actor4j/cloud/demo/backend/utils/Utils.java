@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.cloud.demo.module.backend.utils;
+package io.actor4j.cloud.demo.backend.utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
