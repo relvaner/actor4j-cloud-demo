@@ -32,7 +32,7 @@ import io.actor4j.cloud.demo.module.backend.paymentservice.PaymentServiceActorPo
 import io.actor4j.cloud.demo.module.backend.productcatalogservice.ProductCatalogServiceActorPod;
 import io.actor4j.cloud.demo.module.backend.recomendationservice.RecomendationServiceActorPod;
 import io.actor4j.cloud.demo.module.backend.shippingservice.ShippingServiceActorPod;
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
 import io.actor4j.cloud.demo.single.instance.utils.PodPolicy;
 import io.actor4j.cloud.demo.single.instance.verticles.Actor4jVerticle;

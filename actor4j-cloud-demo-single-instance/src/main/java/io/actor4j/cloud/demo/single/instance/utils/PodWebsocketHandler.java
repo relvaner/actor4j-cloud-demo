@@ -16,7 +16,6 @@
 
 package io.actor4j.cloud.demo.single.instance.utils;
 
-import io.actor4j.cloud.demo.module.shared.utils.User;
 import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.vertx.core.Handler;
@@ -26,6 +25,8 @@ import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonObject;
 
 import static io.actor4j.core.logging.ActorLogger.*;
+
+import io.actor4j.cloud.demo.shared.utils.User;
 
 public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 	protected Vertx vertx;

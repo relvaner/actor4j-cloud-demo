@@ -18,7 +18,7 @@ package io.actor4j.cloud.demo.single.instance.utils;
 import java.util.Map;
 import java.util.Set;
 
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 
 public class PodPolicy {
 	public final Map<String, Set<Integer>> authorizedMethods;

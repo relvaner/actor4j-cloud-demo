@@ -23,10 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.crypto.spec.SecretKeySpec;
 
-//import io.actor4j.analyzer.ActorAnalyzer;
-//import io.actor4j.analyzer.DefaultActorAnalyzerThread;
-//import io.actor4j.analyzer.config.ActorAnalyzerConfig;
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.cloud.demo.single.instance.actors.HealthActor;
 import io.actor4j.cloud.demo.single.instance.pods.PingActorPod;
 import io.actor4j.cloud.demo.single.instance.utils.PodPolicy;

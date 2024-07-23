@@ -16,7 +16,7 @@
 
 package io.actor4j.cloud.demo.single.instance.verticles;
 
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.RemotePodMessage;

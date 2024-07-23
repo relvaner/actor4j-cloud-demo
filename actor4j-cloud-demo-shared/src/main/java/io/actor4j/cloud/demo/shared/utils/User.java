@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.cloud.demo.module.shared.utils;
+package io.actor4j.cloud.demo.shared.utils;
 
 import io.vertx.core.json.JsonObject;
 
