@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.frontend.starter;
+package io.actor4j.cloud.demo.frontend.server.starter;
 
-import io.actor4j.cloud.demo.frontend.verticles.ServerVerticle;
+import io.actor4j.cloud.demo.frontend.server.verticles.ServerVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 
