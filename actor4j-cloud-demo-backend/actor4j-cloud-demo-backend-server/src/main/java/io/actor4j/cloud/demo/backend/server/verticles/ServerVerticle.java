@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.backend.verticles;
+package io.actor4j.cloud.demo.backend.server.verticles;
 
-import io.actor4j.cloud.demo.backend.utils.DefaultPodAuthHandler;
+import io.actor4j.cloud.demo.backend.server.utils.DefaultPodAuthHandler;
 import io.actor4j.cloud.demo.single.instance.utils.JsonSanitizer;
 import io.actor4j.cloud.demo.single.instance.utils.PodAuthHandler;
 import io.actor4j.cloud.demo.single.instance.verticles.AbstractServerVerticle;

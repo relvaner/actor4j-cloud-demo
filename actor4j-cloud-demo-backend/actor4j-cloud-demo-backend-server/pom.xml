@@ -10,7 +10,7 @@
 	<artifactId>actor4j-cloud-demo-backend-server</artifactId>
 	
 	<properties>
-		<main.verticle>io.actor4j.cloud.demo.backend.starter.MainVerticle</main.verticle>
+		<main.verticle>io.actor4j.cloud.demo.backend.server.starter.MainVerticle</main.verticle>
 	</properties>
 
 	<dependencies>

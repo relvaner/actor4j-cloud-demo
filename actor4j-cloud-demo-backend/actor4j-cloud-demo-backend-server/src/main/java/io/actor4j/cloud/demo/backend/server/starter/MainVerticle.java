@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.backend.starter;
+package io.actor4j.cloud.demo.backend.server.starter;
 
 import java.security.Key;
 import java.util.Map;
 import java.util.Set;
 
-import io.actor4j.cloud.demo.backend.verticles.ServerVerticle;
+import io.actor4j.cloud.demo.backend.server.verticles.ServerVerticle;
 import io.actor4j.cloud.demo.module.backend.adservice.AdServiceActorPod;
 import io.actor4j.cloud.demo.module.backend.authorizationservice.AuthorizationServiceActorPod;
 import io.actor4j.cloud.demo.module.backend.cartservice.CartServiceActorPod;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.backend.starter;
+package io.actor4j.cloud.demo.backend.server.starter;
 
 import java.util.Base64;
 

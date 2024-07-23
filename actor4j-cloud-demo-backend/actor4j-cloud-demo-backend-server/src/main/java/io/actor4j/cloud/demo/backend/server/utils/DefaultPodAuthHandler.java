@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.backend.utils;
+package io.actor4j.cloud.demo.backend.server.utils;
 
-import io.actor4j.cloud.demo.backend.starter.Global;
+import io.actor4j.cloud.demo.backend.server.starter.Global;
 import io.actor4j.cloud.demo.single.instance.utils.PodAuthHandler;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
