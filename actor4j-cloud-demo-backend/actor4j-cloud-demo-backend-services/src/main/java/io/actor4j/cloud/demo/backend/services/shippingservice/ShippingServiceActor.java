@@ -31,7 +31,7 @@ import io.vertx.core.json.JsonObject;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class ShippingServiceActor extends PodChildActor {
-	public static final int QUOTE = PodRequestMethod.ACTION_1;
+	public static final int CMD_QUOTE = PodRequestMethod.ACTION_1;
 	
 	protected final Random random;
 	
@@ -50,7 +50,7 @@ public class ShippingServiceActor extends PodChildActor {
 	public void receive(ActorMessage<?> message) {
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
 		
-		if ((message.tag()==PodRequestMethod.POST ||message.tag()==QUOTE) && message.value()!=null && message.value() instanceof JsonObject) {
+		if ((message.tag()==PodRequestMethod.POST ||message.tag()==CMD_QUOTE) && message.value()!=null && message.value() instanceof JsonObject) {
 			Object result = null;
 			int tag = PodStatus.OK;
 			

@@ -34,8 +34,8 @@ import io.vertx.core.json.JsonObject;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class ProductCatalogServiceActor extends PodChildActor {
-	public static final int SEARCH_BY_NAME_OR_DESCRIPTION = PodRequestMethod.ACTION_1;
-	public static final int SEARCH_BY_CATEGORY = PodRequestMethod.ACTION_2;
+	public static final int QRY_SEARCH_BY_NAME_OR_DESCRIPTION = PodRequestMethod.ACTION_1;
+	public static final int QRY_SEARCH_BY_CATEGORY = PodRequestMethod.ACTION_2;
 	
 	protected List<ProductDTO> products;
 	protected final Map<String, List<ProductDTO>> productCatalogMap;
@@ -82,14 +82,14 @@ public class ProductCatalogServiceActor extends PodChildActor {
 				if (message.tag()==PodRequestMethod.GET_ALL) {
 					result = Utils.mapFrom(products);
 				}
-				else if (message.tag()==SEARCH_BY_NAME_OR_DESCRIPTION && message.value()!=null && message.value() instanceof String) {
+				else if (message.tag()==QRY_SEARCH_BY_NAME_OR_DESCRIPTION && message.value()!=null && message.value() instanceof String) {
 					List<ProductDTO> list = searchByNameOrDescription(message.valueAsString());
 					if (list!=null)
 						result = Utils.mapFrom(list);
 					else
 						result = new JsonArray();
 				}
-				else if (message.tag()==SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
+				else if (message.tag()==QRY_SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
 					List<ProductDTO> list = productCatalogMap.get(message.valueAsString());
 					if (list!=null)
 						result = Utils.mapFrom(list);

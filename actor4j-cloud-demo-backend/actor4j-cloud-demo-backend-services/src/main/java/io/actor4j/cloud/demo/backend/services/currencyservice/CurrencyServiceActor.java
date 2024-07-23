@@ -36,7 +36,7 @@ import io.vertx.core.json.JsonObject;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class CurrencyServiceActor extends PodChildActor {
-	public static final int CONVERT_BY_CURRENCY = PodRequestMethod.ACTION_1;
+	public static final int CMD_CONVERT_BY_CURRENCY = PodRequestMethod.ACTION_1;
 	
 	protected Map<String, String> currencyDataMap;
 	protected UUID currencyData;
@@ -69,7 +69,7 @@ public class CurrencyServiceActor extends PodChildActor {
 			
 			if (message.tag()==PodRequestMethod.GET_ALL)
 				result = Utils.mapFrom(getCurrencies());
-			else if (message.tag()==CONVERT_BY_CURRENCY && message.value()!=null && message.value() instanceof JsonObject) {
+			else if (message.tag()==CMD_CONVERT_BY_CURRENCY && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
 					ConvertDTO convert = ((JsonObject)message.value()).mapTo(ConvertDTO.class);
 					if (convert!=null) {

@@ -33,7 +33,7 @@ import io.vertx.core.json.JsonObject;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class AuthorizationServiceActor extends PodChildActor {
-	public static final int INIT_SECRET_KEY = PodRequestMethod.ACTION_1;
+	public static final int CMD_INIT_SECRET_KEY = PodRequestMethod.ACTION_1;
 	
 	public static final String JWT_ISSUER    = "https://yourdomain/demo";
 	public static final String JWT_AUDIENCE  = "actor4j-cloud-demo";
@@ -76,7 +76,7 @@ public class AuthorizationServiceActor extends PodChildActor {
 			
 			tell(result, tag, message.source(), message.interaction());
 		}
-		else if (message.tag()==INIT_SECRET_KEY && message.value()!=null && message.value() instanceof ImmutableObject) {
+		else if (message.tag()==CMD_INIT_SECRET_KEY && message.value()!=null && message.value() instanceof ImmutableObject) {
 			@SuppressWarnings("unchecked")
 			User user = ((PodActorMessage<JsonObject, User, Void>)message).user();
 			if (user!=null && user.principal()!=null) {

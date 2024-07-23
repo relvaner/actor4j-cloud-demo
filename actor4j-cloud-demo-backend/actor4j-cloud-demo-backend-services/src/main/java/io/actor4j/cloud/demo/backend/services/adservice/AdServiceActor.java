@@ -33,8 +33,8 @@ import io.vertx.core.json.JsonArray;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class AdServiceActor extends PodChildActor {
-	public static final int SEARCH_BY_CATEGORY = PodRequestMethod.ACTION_1;
-	public static final int RANDOM_ADS = PodRequestMethod.ACTION_2;
+	public static final int QRY_SEARCH_BY_CATEGORY = PodRequestMethod.ACTION_1;
+	public static final int QRY_RANDOM_ADS = PodRequestMethod.ACTION_2;
 	
 	protected static int MAX_RANDOM_ADS = 2;
 	
@@ -80,14 +80,14 @@ public class AdServiceActor extends PodChildActor {
 		if (message.tag()==PodRequestMethod.GET_ALL) {
 			result = Utils.mapFrom(ads);
 		}
-		else if (message.tag()==SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
+		else if (message.tag()==QRY_SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
 			List<AdDTO> list = adsMap.get(message.valueAsString());
 			if (list!=null)
 				result = Utils.mapFrom(list);
 			else
 				result = new JsonArray();
 		}
-		else if (message.tag()==RANDOM_ADS)
+		else if (message.tag()==QRY_RANDOM_ADS)
 			result = Utils.mapFrom(getRandomAds());
 		else
 			tag = PodStatus.METHOD_NOT_ALLOWED;
