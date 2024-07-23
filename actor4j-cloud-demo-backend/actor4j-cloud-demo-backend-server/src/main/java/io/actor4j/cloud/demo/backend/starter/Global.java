@@ -22,7 +22,7 @@ import javax.crypto.SecretKey;
 
 import org.apache.commons.lang3.mutable.MutableObject;
 
-import io.actor4j.cloud.demo.module.single.instance.starter.DefaultGlobal;
+import io.actor4j.cloud.demo.single.instance.starter.DefaultGlobal;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 

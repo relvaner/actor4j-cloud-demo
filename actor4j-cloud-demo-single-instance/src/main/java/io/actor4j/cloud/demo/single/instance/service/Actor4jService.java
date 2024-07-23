@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.service;
+package io.actor4j.cloud.demo.single.instance.service;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -27,9 +27,9 @@ import javax.crypto.spec.SecretKeySpec;
 //import io.actor4j.analyzer.DefaultActorAnalyzerThread;
 //import io.actor4j.analyzer.config.ActorAnalyzerConfig;
 import io.actor4j.cloud.demo.module.shared.utils.User;
-import io.actor4j.cloud.demo.module.single.instance.actors.HealthActor;
-import io.actor4j.cloud.demo.module.single.instance.pods.PingActorPod;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodPolicy;
+import io.actor4j.cloud.demo.single.instance.actors.HealthActor;
+import io.actor4j.cloud.demo.single.instance.pods.PingActorPod;
+import io.actor4j.cloud.demo.single.instance.utils.PodPolicy;
 import io.actor4j.core.ActorRuntime;
 import io.actor4j.core.ActorService;
 import io.actor4j.core.config.ActorServiceConfig;

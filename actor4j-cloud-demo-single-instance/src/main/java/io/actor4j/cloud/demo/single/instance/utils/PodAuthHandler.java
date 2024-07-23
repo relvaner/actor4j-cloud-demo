@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.cloud.demo.module.single.instance.utils;
+package io.actor4j.cloud.demo.single.instance.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import io.actor4j.cloud.demo.module.shared.utils.User;
-import io.actor4j.cloud.demo.module.single.instance.service.Actor4jService;
+import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;

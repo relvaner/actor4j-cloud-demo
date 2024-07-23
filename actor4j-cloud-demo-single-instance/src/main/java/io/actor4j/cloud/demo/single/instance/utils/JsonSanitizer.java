@@ -13,24 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.cloud.demo.module.single.instance.utils;
+package io.actor4j.cloud.demo.single.instance.utils;
 
-public class Pod {
-	public int status;
-	public String message;
-		
-	public Pod() {
-		super();
-	}
+import io.vertx.core.json.JsonObject;
 
-	public Pod(int status, String message) {
-		super();
-		this.status = status;
-		this.message = message;
-	}
-
-	@Override
-	public String toString() {
-		return "Pod [status=" + status + ", message=" + message + "]";
-	}
+public interface JsonSanitizer {
+	public JsonObject sanitize(String json);
 }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.utils.config;
+package io.actor4j.cloud.demo.single.instance.utils.config;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import io.actor4j.cloud.demo.module.single.instance.service.Actor4jService;
+import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.vertx.core.Vertx;

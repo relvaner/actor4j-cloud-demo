@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.cloud.demo.module.single.instance.utils;
+package io.actor4j.cloud.demo.single.instance.utils;
 
 public class RESTDefaultResponse {
 	protected String type;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.starter;
+package io.actor4j.cloud.demo.single.instance.starter;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.logging.ActorLogger.logger;

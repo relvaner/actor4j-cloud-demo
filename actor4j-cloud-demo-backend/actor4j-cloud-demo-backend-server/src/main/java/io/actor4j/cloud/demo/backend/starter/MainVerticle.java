@@ -33,9 +33,9 @@ import io.actor4j.cloud.demo.module.backend.productcatalogservice.ProductCatalog
 import io.actor4j.cloud.demo.module.backend.recomendationservice.RecomendationServiceActorPod;
 import io.actor4j.cloud.demo.module.backend.shippingservice.ShippingServiceActorPod;
 import io.actor4j.cloud.demo.module.shared.utils.User;
-import io.actor4j.cloud.demo.module.single.instance.service.Actor4jService;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodPolicy;
-import io.actor4j.cloud.demo.module.single.instance.verticles.Actor4jVerticle;
+import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
+import io.actor4j.cloud.demo.single.instance.utils.PodPolicy;
+import io.actor4j.cloud.demo.single.instance.verticles.Actor4jVerticle;
 import io.actor4j.core.immutable.ImmutableObject;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.utils.PodRequestMethod;

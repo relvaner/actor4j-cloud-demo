@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.pods;
+package io.actor4j.cloud.demo.single.instance.pods;
 
 import java.util.UUID;
 
-import io.actor4j.cloud.demo.module.single.instance.actors.PingActor;
+import io.actor4j.cloud.demo.single.instance.actors.PingActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.RemotePodMessage;

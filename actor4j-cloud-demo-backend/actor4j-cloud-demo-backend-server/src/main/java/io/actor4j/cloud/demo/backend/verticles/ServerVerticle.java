@@ -17,9 +17,9 @@
 package io.actor4j.cloud.demo.backend.verticles;
 
 import io.actor4j.cloud.demo.backend.utils.DefaultPodAuthHandler;
-import io.actor4j.cloud.demo.module.single.instance.utils.JsonSanitizer;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodAuthHandler;
-import io.actor4j.cloud.demo.module.single.instance.verticles.AbstractServerVerticle;
+import io.actor4j.cloud.demo.single.instance.utils.JsonSanitizer;
+import io.actor4j.cloud.demo.single.instance.utils.PodAuthHandler;
+import io.actor4j.cloud.demo.single.instance.verticles.AbstractServerVerticle;
 import io.vertx.core.json.JsonObject;
 
 public class ServerVerticle extends AbstractServerVerticle {

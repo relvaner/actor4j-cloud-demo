@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.utils.config;
+package io.actor4j.cloud.demo.single.instance.utils.config;
 
-import io.actor4j.cloud.demo.module.single.instance.utils.JsonSanitizer;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodAuthHandler;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodRequestHandler;
+import io.actor4j.cloud.demo.single.instance.utils.JsonSanitizer;
+import io.actor4j.cloud.demo.single.instance.utils.PodAuthHandler;
+import io.actor4j.cloud.demo.single.instance.utils.PodRequestHandler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 

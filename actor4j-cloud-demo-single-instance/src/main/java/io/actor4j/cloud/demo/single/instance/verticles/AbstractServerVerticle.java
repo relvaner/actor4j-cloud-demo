@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.verticles;
+package io.actor4j.cloud.demo.single.instance.verticles;
 
-import io.actor4j.cloud.demo.module.single.instance.starter.DefaultGlobal;
-import io.actor4j.cloud.demo.module.single.instance.utils.JsonSanitizer;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodAuthHandler;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodWebsocketHandler;
-import io.actor4j.cloud.demo.module.single.instance.utils.config.ActorsServerConfig;
-import io.actor4j.cloud.demo.module.single.instance.utils.config.RestServerConfig;
+import io.actor4j.cloud.demo.single.instance.starter.DefaultGlobal;
+import io.actor4j.cloud.demo.single.instance.utils.JsonSanitizer;
+import io.actor4j.cloud.demo.single.instance.utils.PodAuthHandler;
+import io.actor4j.cloud.demo.single.instance.utils.PodWebsocketHandler;
+import io.actor4j.cloud.demo.single.instance.utils.config.ActorsServerConfig;
+import io.actor4j.cloud.demo.single.instance.utils.config.RestServerConfig;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;

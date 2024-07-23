@@ -17,7 +17,7 @@
 package io.actor4j.cloud.demo.backend.utils;
 
 import io.actor4j.cloud.demo.backend.starter.Global;
-import io.actor4j.cloud.demo.module.single.instance.utils.PodAuthHandler;
+import io.actor4j.cloud.demo.single.instance.utils.PodAuthHandler;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;

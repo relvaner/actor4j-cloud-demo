@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.utils;
+package io.actor4j.cloud.demo.single.instance.utils;
 
 import io.actor4j.cloud.demo.module.shared.utils.User;
 import io.actor4j.core.pods.RemotePodMessageDTO;

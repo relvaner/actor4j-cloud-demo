@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.actor4j.cloud.demo.module.single.instance.utils.config;
+package io.actor4j.cloud.demo.single.instance.utils.config;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.cloud.demo.module.single.instance.actors;
+package io.actor4j.cloud.demo.single.instance.actors;
 
 import java.util.UUID;
 

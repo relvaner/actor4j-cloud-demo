@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.actor4j.cloud.demo.single.instance.utils;
 
-package io.actor4j.cloud.demo.module.single.instance.actors;
-
-import io.actor4j.core.actors.Actor;
-import io.actor4j.core.messages.ActorMessage;
-
-public class HealthActor extends Actor {
-	@Override
-	public void preStart() {
-		setAlias("health");
-	}
-	
-	@Override
-	public void receive(ActorMessage<?> message) {
-		tell(200, 0, message.source());
-	}
+public final class PodHttpHeaders {
+	public static final String X_POD_AUTHORIZATION  = "x-pod-authorization";
+	public static final String X_POD_DOMAIN         = "x-pod-domain";
+	public static final String X_POD_REQUEST_METHOD = "x-pod-request-method";
 }
