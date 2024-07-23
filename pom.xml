@@ -38,11 +38,10 @@
 	</properties>
 	
   	<modules>
-		<module>actor4j-cloud-demo-module-single-instance</module>
-		<module>actor4j-cloud-demo-module-backend</module>
-		<module>actor4j-cloud-demo-module-backend-utils</module>
-		<module>actor4j-cloud-demo-module-shared</module>
-  		<module>actor4j-cloud-demo-backend</module>
+		<module>actor4j-cloud-demo-backend</module>
   		<module>actor4j-cloud-demo-frontend</module>
+  		
+		<module>actor4j-cloud-demo-single-instance</module>
+		<module>actor4j-cloud-demo-shared</module>
   	</modules>
 </project>
