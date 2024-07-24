@@ -19,7 +19,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.UUID;
 
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.immutable.ImmutableObject;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;

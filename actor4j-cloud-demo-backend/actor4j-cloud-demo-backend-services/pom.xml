@@ -40,17 +40,16 @@
 			<version>${actor4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		
+
 		<dependency>
   			<groupId>io.actor4j</groupId>
-  			<artifactId>actor4j-cloud-demo-module-backend-utils</artifactId>
-  			<version>1.0.0</version>
+  			<artifactId>actor4j-cloud-demo-backend-utils</artifactId>
+  			<version>${actor4j.cloud.demo.version}</version>
   		</dependency>
 		<dependency>
   			<groupId>io.actor4j</groupId>
-  			<artifactId>actor4j-cloud-demo-module-shared</artifactId>
-  			<version>1.0.0</version>
+  			<artifactId>actor4j-cloud-demo-shared</artifactId>
+  			<version>${actor4j.cloud.demo.version}</version>
   		</dependency>
 		
 		<dependency>

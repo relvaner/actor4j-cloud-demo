@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.ConvertDTO;
 import io.actor4j.cloud.demo.backend.services.shared.MoneyDTO;
-import io.actor4j.cloud.demo.module.backend.utils.Utils;
+import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.immutable.ImmutableMap;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;

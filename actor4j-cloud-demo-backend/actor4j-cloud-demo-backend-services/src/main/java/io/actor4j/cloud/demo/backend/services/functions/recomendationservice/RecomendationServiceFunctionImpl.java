@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import io.actor4j.cloud.demo.backend.services.helper.PodAlias;
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
-import io.actor4j.cloud.demo.module.backend.utils.Utils;
+import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;

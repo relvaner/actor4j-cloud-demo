@@ -30,7 +30,7 @@ import io.actor4j.cloud.demo.backend.services.shared.OrderItem;
 import io.actor4j.cloud.demo.backend.services.shared.OrderResultDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ShipOrderDTO;
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;

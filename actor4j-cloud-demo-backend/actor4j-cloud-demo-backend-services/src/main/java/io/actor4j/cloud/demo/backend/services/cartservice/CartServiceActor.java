@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.CartDTO;
 import io.actor4j.cloud.demo.backend.services.shared.CartItemDTO;
-import io.actor4j.cloud.demo.module.shared.utils.User;
+import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;
 import io.actor4j.core.pods.PodContext;
