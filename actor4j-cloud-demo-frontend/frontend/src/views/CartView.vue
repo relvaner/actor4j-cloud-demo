@@ -258,7 +258,7 @@
 						for (let i=0; i<this.cart.items.length; i++) {
 							let item = this.cart.items[i];
 							let product  = this.productCatalog.find(product => product.id === item.product_id);
-							this.totalCostNumber += product.price_usd.units*item.quantity + product.price_usd.nanos*1.0/1_000_000_000*item.quantity;
+							this.totalCostNumber += product.price_usd.units*item.quantity + product.price_usd.nanos*1.0/1000000000*item.quantity;
 						}
 						this.shippingCost = this.moneyAsString(response.data.data);
 						this.totalCostNumber += parseFloat(this.shippingCost);
