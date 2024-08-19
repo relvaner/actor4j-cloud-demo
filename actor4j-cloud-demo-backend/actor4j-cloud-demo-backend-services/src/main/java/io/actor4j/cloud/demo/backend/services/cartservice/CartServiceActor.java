@@ -47,7 +47,7 @@ public class CartServiceActor extends PodChildActor {
 		setAlias(context.domain());
 		
 		manager = new PodVolatileActorCacheManager<>(this, "volatile-cache-"+context.domain(), groupId);
-		manager.init(addChild(manager.createReplica(500, context)));
+		manager.createReplica(500, context);
 		
 		handler = new ActorCacheHandler<>((msg) -> manager.get(msg));
 	}
