@@ -78,6 +78,7 @@ public class Actor4jService {
 			*/
 				
 			ActorServiceConfig config = ActorServiceConfig.builder()
+				.podHost(() -> vertx)
 				.podDatabase(database)
 				.debugUnhandled(true)
 				.debugUndelivered(true)
