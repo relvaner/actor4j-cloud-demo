@@ -32,6 +32,7 @@ import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ShipOrderDTO;
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.actors.EmbeddedActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -104,7 +105,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	 *  (9) -> Ship order (ShippingService)
 	 * (10) -> Send confirmation email (EmailService)
 	 */
-	protected void placeOrder(OrderDTO order, User user, UUID podHandler, UUID interaction) {
+	protected void placeOrder(OrderDTO order, User user, ActorId podHandler, UUID interaction) {
 		logger().log(DEBUG, String.format("[%s] placeOrder", PodAlias.CheckoutService));
 		
 		orderResult = new OrderResult();
@@ -158,7 +159,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		((InternalEmbeddedActorCell)cell).fireActiveBehaviour(null, (expectedSize) -> expectedSize==1);
 	}
 	
-	protected void fetchCart(User user, UUID podHandler, UUID interaction) {
+	protected void fetchCart(User user, ActorId podHandler, UUID interaction) {
 		host().sendViaAlias(PodActorMessage.create(null, PodRequestMethod.GET, host().self(), null, interaction, user, "", context.domain()), PodAlias.CartService);
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.CartService), (msg) -> {
@@ -191,7 +192,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}, false);
 	}
 	
-	protected void fetchProducts(UUID podHandler, UUID interaction) {
+	protected void fetchProducts(ActorId podHandler, UUID interaction) {
 		if (cart.items().size()>0)
 			host().tell(cart.items().get(0).product_id(), PodRequestMethod.GET, PodAlias.ProductCatalogService, interaction, null, context.domain());
 		
@@ -234,7 +235,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}
 	}
 	
-	protected void convertProductPrices(OrderDTO order, UUID podHandler, UUID interaction) {
+	protected void convertProductPrices(OrderDTO order, ActorId podHandler, UUID interaction) {
 		if (orderResult.items.size()>0)
 			host().tell(JsonObject.mapFrom(new ConvertDTO(orderResult.items.get(0).cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
 		
@@ -272,7 +273,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}
 	}
 	
-	protected void quoteShipping(OrderDTO order, UUID podHandler, UUID interaction) {
+	protected void quoteShipping(OrderDTO order, ActorId podHandler, UUID interaction) {
 		host().tell(JsonObject.mapFrom(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.ACTION_1, PodAlias.ShippingService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.ShippingService), (msg) -> {
@@ -302,7 +303,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}, false);
 	}
 	
-	protected void convertShippingCost(OrderDTO order, UUID podHandler, UUID interaction) {
+	protected void convertShippingCost(OrderDTO order, ActorId podHandler, UUID interaction) {
 		host().tell(JsonObject.mapFrom(new ConvertDTO(orderResult.shipping_cost, order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.CurrencyService), (msg) -> {
@@ -338,7 +339,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 			orderResult.total_cost = MoneyDTO.sum(orderResult.total_cost, MoneyDTO.mul(item.cost(), item.item().quantity()));
 	}
 	
-	protected void chargeCreditCard(OrderDTO order, UUID podHandler, UUID interaction) {
+	protected void chargeCreditCard(OrderDTO order, ActorId podHandler, UUID interaction) {
 		host().tell(JsonObject.mapFrom(new ChargeDTO(orderResult.total_cost, order.credit_card())), PodRequestMethod.POST, PodAlias.PaymentService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.PaymentService), (msg) -> {
@@ -359,7 +360,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}, false);
 	}
 	
-	protected void emptyCart(User user, UUID podHandler, UUID interaction) {
+	protected void emptyCart(User user, ActorId podHandler, UUID interaction) {
 		host().sendViaAlias(PodActorMessage.create(null, PodRequestMethod.DELETE, host().self(), null, interaction, user, "", context.domain()), PodAlias.CartService);
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.CartService), (msg) -> {
@@ -376,7 +377,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}, false);
 	}
 	
-	protected void shipOrder(OrderDTO order, UUID podHandler, UUID interaction) {
+	protected void shipOrder(OrderDTO order, ActorId podHandler, UUID interaction) {
 		host().tell(JsonObject.mapFrom(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.POST, PodAlias.ShippingService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.ShippingService), (msg) -> {
@@ -395,7 +396,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		}, false);
 	}
 	
-	protected void sendConfirmationEmail(OrderDTO order, UUID podHandler, UUID interaction) {
+	protected void sendConfirmationEmail(OrderDTO order, ActorId podHandler, UUID interaction) {
 		host().tell(JsonObject.mapFrom(new OrderConfirmationDTO(order.email(), OrderResultDTO.of(orderResult))), PodRequestMethod.GET, PodAlias.EmailService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.EmailService), (msg) -> {

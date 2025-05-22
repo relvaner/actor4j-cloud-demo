@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
 import io.actor4j.cloud.demo.backend.utils.Utils;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
@@ -39,7 +40,7 @@ public class ProductCatalogServiceActor extends PodChildActor {
 	
 	protected List<ProductDTO> products;
 	protected final Map<String, List<ProductDTO>> productCatalogMap;
-	protected UUID productCatalog;
+	protected ActorId productCatalog;
 	
 	public ProductCatalogServiceActor(UUID groupId, PodContext context) {
 		super(groupId, context);

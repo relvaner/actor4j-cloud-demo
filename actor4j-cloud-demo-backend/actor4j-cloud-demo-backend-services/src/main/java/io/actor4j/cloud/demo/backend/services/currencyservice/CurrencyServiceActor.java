@@ -25,6 +25,7 @@ import java.util.UUID;
 import io.actor4j.cloud.demo.backend.services.shared.ConvertDTO;
 import io.actor4j.cloud.demo.backend.services.shared.MoneyDTO;
 import io.actor4j.cloud.demo.backend.utils.Utils;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableMap;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -39,7 +40,7 @@ public class CurrencyServiceActor extends PodChildActor {
 	public static final int CMD_CONVERT_BY_CURRENCY = PodRequestMethod.ACTION_1;
 	
 	protected Map<String, String> currencyDataMap;
-	protected UUID currencyData;
+	protected ActorId currencyData;
 	
 	public CurrencyServiceActor(UUID groupId, PodContext context) {
 		super(groupId, context);
