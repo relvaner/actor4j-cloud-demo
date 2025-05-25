@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.actor4j</groupId>
 		<artifactId>actor4j-cloud-demo-backend</artifactId>
-		<version>1.1.0</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>actor4j-cloud-demo-backend-services</artifactId>
 
@@ -44,12 +44,12 @@
 		<dependency>
   			<groupId>io.actor4j</groupId>
   			<artifactId>actor4j-cloud-demo-backend-utils</artifactId>
-  			<version>${actor4j.cloud.demo.version}</version>
+  			<version>${revision}</version>
   		</dependency>
 		<dependency>
   			<groupId>io.actor4j</groupId>
   			<artifactId>actor4j-cloud-demo-shared</artifactId>
-  			<version>${actor4j.cloud.demo.version}</version>
+  			<version>${revision}</version>
   		</dependency>
 		
 		<dependency>
