@@ -38,6 +38,28 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
+	<build>
+		<plugins>
+    		<plugin>
+      			<groupId>org.codehaus.mojo</groupId>
+      			<artifactId>flatten-maven-plugin</artifactId>
+      			<version>1.7.0</version>
+      			<configuration>
+        			<updatePomFile>true</updatePomFile>
+      			</configuration>
+      			<executions>
+        			<execution>
+          				<id>flatten</id>
+          				<phase>verify</phase>
+          				<goals>
+            				<goal>flatten</goal>
+          				</goals>
+        			</execution>
+      			</executions>
+    		</plugin>
+    	</plugins>
+    </build>
+	
   	<modules>
 		<module>actor4j-cloud-demo-backend</module>
   		<module>actor4j-cloud-demo-frontend</module>
