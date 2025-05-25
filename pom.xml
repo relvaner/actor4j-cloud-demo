@@ -29,7 +29,7 @@
 	
 	<properties>
 		<revision>1.1.0</revision>
-		<actor4j.version>2.1.0</actor4j.version>
+		<actor4j.version>2.4.0</actor4j.version>
 		<vertx.version>4.4.9</vertx.version>
 		<jsonwebtoken.version>0.12.5</jsonwebtoken.version>
 		<junit.version>5.10.0</junit.version>
