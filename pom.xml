@@ -27,6 +27,12 @@
 		</developer>
 	</developers>
 	
+	<scm>
+		<connection>scm:git:https://github.com/relvaner/actor4j-cloud-demo.git</connection>
+		<developerConnection>scm:git:git@github.com:relvaner/actor4j-cloud-demo.git</developerConnection>
+		<url>https://github.com/relvaner/actor4j-cloud-demo/</url>
+	</scm>
+	
 	<properties>
 		<revision>1.1.0</revision>
 		<actor4j.version>2.4.0</actor4j.version>
