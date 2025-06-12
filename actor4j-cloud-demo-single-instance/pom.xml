@@ -42,12 +42,12 @@
 		<dependency>
 			<groupId>io.actor4j</groupId>
 			<artifactId>actor4j-core-sdk</artifactId>
-			<version>${actor4j.version}</version>
+			<version>${actor4j.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.actor4j</groupId>
 			<artifactId>actor4j-core-runtime</artifactId>
-			<version>${actor4j.version}</version>
+			<version>${actor4j.core.version}</version>
 		</dependency>
 		<!--
 		<dependency>
