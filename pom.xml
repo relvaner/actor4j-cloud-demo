@@ -37,9 +37,9 @@
 		<revision>1.1.0</revision>
 		<actor4j.core.version>2.4.0</actor4j.core.version>
 		<actor4j.version>2.4.0</actor4j.version>
-		<vertx.version>4.4.9</vertx.version>
-		<jsonwebtoken.version>0.12.5</jsonwebtoken.version>
-		<junit.version>5.10.0</junit.version>
+		<vertx.version>4.5.15</vertx.version>
+		<jsonwebtoken.version>0.12.6</jsonwebtoken.version>
+		<junit.version>5.13.1</junit.version>
 		<maven.compiler.source>21</maven.compiler.source>
   		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
