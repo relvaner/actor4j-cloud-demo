@@ -67,7 +67,7 @@ public class Actor4jService {
 			ActorMessageUtils.SUPPORTED_TYPES.add(SecretKeySpec.class);
 			
 			ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) -> 
-				vertx.eventBus().publish(replyAddress, new JsonObject().put("payload", result).put("status", tag));
+				vertx.eventBus().publish((String)replyAddress, new JsonObject().put("payload", result).put("status", tag));
 			
 			/*
 			ActorAnalyzerConfig config = ActorAnalyzerConfig.builder()
