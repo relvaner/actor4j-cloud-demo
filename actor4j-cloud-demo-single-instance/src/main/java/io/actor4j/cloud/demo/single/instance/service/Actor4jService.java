@@ -30,8 +30,9 @@ import io.actor4j.cloud.demo.single.instance.utils.PodPolicy;
 import io.actor4j.core.ActorRuntime;
 import io.actor4j.core.ActorService;
 import io.actor4j.core.config.ActorServiceConfig;
-import io.actor4j.core.runtime.ActorGlobalSettings;
 import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.config.ActorRuntimeConfig;
+import io.actor4j.core.runtime.config.InternalServerCallback;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.ActorMessageUtils;
 import io.actor4j.core.pods.PodConfiguration;
@@ -66,8 +67,11 @@ public class Actor4jService {
 			ActorMessageUtils.SUPPORTED_TYPES.add(JsonArray.class);
 			ActorMessageUtils.SUPPORTED_TYPES.add(SecretKeySpec.class);
 			
-			ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) -> 
+			InternalServerCallback internalServerCallback = (replyAddress, result, tag) -> 
 				vertx.eventBus().publish((String)replyAddress, new JsonObject().put("payload", result).put("status", tag));
+			ActorRuntimeConfig runtimeConfig = ActorRuntimeConfig.builder()
+				.internalServerCallback(internalServerCallback)
+				.build();
 			
 			/*
 			ActorAnalyzerConfig config = ActorAnalyzerConfig.builder()
@@ -84,6 +88,7 @@ public class Actor4jService {
 				.debugUndelivered(true)
 				.build();
 			service = ActorService.create(ActorRuntime.factory(), config);
+			((InternalActorSystem)service).setRuntimeConfig(runtimeConfig);
 			systemLogger().log(INFO, String.format("%s - Service started...", service.getConfig().name()));
 			register();
 			service.start();
