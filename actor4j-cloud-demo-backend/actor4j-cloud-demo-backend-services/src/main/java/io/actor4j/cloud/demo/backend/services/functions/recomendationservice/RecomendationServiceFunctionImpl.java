@@ -32,9 +32,9 @@ import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.pods.functions.PodFunction.Reply;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
-import io.actor4j.core.utils.Pair;
 import io.vertx.core.json.JsonArray;
 
 import static io.actor4j.core.logging.ActorLogger.*;
@@ -45,7 +45,7 @@ public class RecomendationServiceFunctionImpl {
 	protected ActorRef host;
 	protected PodContext context;
 	
-	protected Map<UUID, Function<JsonArray, Pair<Object, Integer>>> handlerMap;
+	protected Map<UUID, Function<JsonArray, Reply>> handlerMap;
 	protected final Random random;
 	
 	public RecomendationServiceFunctionImpl(ActorRef host, PodContext context) {
@@ -57,24 +57,24 @@ public class RecomendationServiceFunctionImpl {
 		handlerMap = new HashMap<>();
 	}
 
-	public Pair<Object, Integer> handle(ActorMessage<?> message) {
-		Pair<Object, Integer> result = null;
+	public Reply handle(ActorMessage<?> message) {
+		Reply result = null;
 		
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
 		
-		Function<JsonArray, Pair<Object, Integer>> handler = handlerMap.get(message.interaction());
+		Function<JsonArray, Reply> handler = handlerMap.get(message.interaction());
 		if (handler!=null && message.value()!=null && message.value() instanceof JsonArray) {
 			result = handler.apply((JsonArray)message.value());
 			handlerMap.remove(message.interaction());
 		}
 		else if (message.tag()==PodRequestMethod.GET_ALL && message.value()!=null && message.value() instanceof JsonArray) {
 			handlerMap.put(message.interaction(), (array) -> {
-				return Pair.of(generateRecomendations((JsonArray)message.value(), array), PodStatus.OK);
+				return Reply.of(generateRecomendations((JsonArray)message.value(), array), PodStatus.OK);
 			});
 			host.tell(null, PodRequestMethod.GET_ALL, PodAlias.ProductCatalogService, message.interaction(), null, context.domain());
 		}
 		else
-			result = Pair.of(null, PodStatus.METHOD_NOT_ALLOWED);
+			result = Reply.of(null, PodStatus.METHOD_NOT_ALLOWED);
 		
 		return result;
 	}
