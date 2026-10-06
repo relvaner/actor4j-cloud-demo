@@ -93,7 +93,7 @@ public class AuthorizationServiceActor extends PodChildActor {
 					tell(null, PodStatus.OK, message.source(), message.interaction());
 				}
 				else
-					tell(null, PodStatus.FORBIDDED, message.source(), message.interaction());
+					tell(null, PodStatus.FORBIDDEN, message.source(), message.interaction());
 			}
 			else
 				tell(null, PodStatus.UNAUTHORIZED, message.source(), message.interaction());

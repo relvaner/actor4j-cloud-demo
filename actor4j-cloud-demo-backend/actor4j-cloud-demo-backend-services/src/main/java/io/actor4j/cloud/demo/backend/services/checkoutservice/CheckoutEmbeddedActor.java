@@ -167,7 +167,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 			
 			if (msg.tag()==PodStatus.OK && msg.value()!=null && msg.value() instanceof JsonObject) {
 				if (((JsonObject)msg.value()).isEmpty()) {
-					host().tell("Cart is empty", PodStatus.NOT_ACCEPTABALE, podHandler, interaction);
+					host().tell("Cart is empty", PodStatus.NOT_ACCEPTABLE, podHandler, interaction);
 					return true;
 				}
 				
@@ -349,7 +349,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 				done = false;
 				// String transaction_id = msg.valueAsString();
 			}
-			else if (msg.tag()==PodStatus.NOT_ACCEPTABALE)
+			else if (msg.tag()==PodStatus.NOT_ACCEPTABLE)
 				host().tell(msg.value(), msg.tag(), podHandler, interaction);
 			else 
 				host().tell(context.domain()+"_020", PodStatus.INTERNAL_SERVER_ERROR, podHandler, interaction);

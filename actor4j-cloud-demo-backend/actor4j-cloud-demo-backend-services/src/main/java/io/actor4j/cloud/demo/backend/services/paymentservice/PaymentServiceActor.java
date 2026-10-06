@@ -85,11 +85,11 @@ public class PaymentServiceActor extends PodChildActor {
 		CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.MASTERCARD + CreditCardValidator.VISA);
 		if (!ccv.isValid(charge.credit_card().credit_card_number())) {
 			result = "Credit card is not valid or accepted";
-			tag = PodStatus.NOT_ACCEPTABALE;
+			tag = PodStatus.NOT_ACCEPTABLE;
 		}
 		else if ((currentYear * 12 + currentMonth) > (charge.credit_card().credit_card_expiration_year() * 12 + charge.credit_card().credit_card_expiration_month())) {
 			result = "Credit card has expired";
-			tag = PodStatus.NOT_ACCEPTABALE;
+			tag = PodStatus.NOT_ACCEPTABLE;
 		}
 		
 		return Pair.of(result, tag);
