@@ -26,10 +26,10 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
-import io.actor4j.core.pods.data.access.utils.PodVolatileActorCacheManager;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.utils.ActorCacheHandler;
+import io.actor4j.data.access.pods.utils.PodVolatileActorCacheManager;
 import io.vertx.core.json.JsonObject;
 
 import static io.actor4j.core.logging.ActorLogger.*;
