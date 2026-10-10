@@ -32,9 +32,9 @@ import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
-import io.actor4j.core.pods.functions.PodFunction.Reply;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
+import io.actor4j.core.utils.Reply;
 import io.vertx.core.json.JsonArray;
 
 import static io.actor4j.core.logging.ActorLogger.*;
