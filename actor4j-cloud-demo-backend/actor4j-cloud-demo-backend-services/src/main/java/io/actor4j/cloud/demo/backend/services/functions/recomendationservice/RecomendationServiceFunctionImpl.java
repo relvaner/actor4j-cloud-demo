@@ -57,21 +57,21 @@ public class RecomendationServiceFunctionImpl {
 		handlerMap = new HashMap<>();
 	}
 
-	public Reply handle(ActorMessage<?> message) {
+	public Reply handle(ActorMessage<?> message, UUID interaction) {
 		Reply result = null;
 		
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
 		
-		Function<JsonArray, Reply> handler = handlerMap.get(message.interaction());
+		Function<JsonArray, Reply> handler = handlerMap.get(interaction);
 		if (handler!=null && message.value()!=null && message.value() instanceof JsonArray) {
 			result = handler.apply((JsonArray)message.value());
-			handlerMap.remove(message.interaction());
+			handlerMap.remove(interaction);
 		}
 		else if (message.tag()==PodRequestMethod.GET_ALL && message.value()!=null && message.value() instanceof JsonArray) {
-			handlerMap.put(message.interaction(), (array) -> {
+			handlerMap.put(interaction, (array) -> {
 				return Reply.of(generateRecomendations((JsonArray)message.value(), array), PodStatus.OK);
 			});
-			host.tell(null, PodRequestMethod.GET_ALL, PodAlias.ProductCatalogService, message.interaction(), null, context.domain());
+			host.tell(null, PodRequestMethod.GET_ALL, PodAlias.ProductCatalogService, interaction, null, context.domain());
 		}
 		else
 			result = Reply.of(null, PodStatus.METHOD_NOT_ALLOWED);
