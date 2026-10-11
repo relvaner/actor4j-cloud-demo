@@ -37,12 +37,12 @@ public class RecomendationServiceFunctionPod extends RemoteFunctionPod {
 			protected RecomendationServiceFunctionImpl functionImpl = new RecomendationServiceFunctionImpl(host, context);
 
 			@Override
-			public Reply handle(ActorMessage<?> message, UUID interaction) {
+			public Reply handle(ActorMessage<?> message, UUID interaction, boolean replyAllowed) {
 				return functionImpl.handle(message, interaction);
 			}
 			
 			@Override
-			public Reply handle(RemotePodMessage remoteMessage, UUID interaction) {
+			public Reply handle(RemotePodMessage remoteMessage, UUID interaction, boolean replyExpected) {
 				return functionImpl.handle(
 					ActorMessage.create(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), host.self(), null, interaction, "", ""),
 					interaction);
