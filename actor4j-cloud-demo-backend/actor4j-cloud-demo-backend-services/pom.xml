@@ -27,53 +27,55 @@
 			<artifactId>vertx-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>io.actor4j</groupId>
 			<artifactId>actor4j-core-sdk</artifactId>
 			<version>${actor4j.core.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>io.actor4j</groupId>
 			<artifactId>actor4j-data</artifactId>
 			<version>${actor4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		-->
 
 		<dependency>
-  			<groupId>io.actor4j</groupId>
-  			<artifactId>actor4j-cloud-demo-backend-utils</artifactId>
-  			<version>${revision}</version>
-  		</dependency>
-		<dependency>
-  			<groupId>io.actor4j</groupId>
-  			<artifactId>actor4j-cloud-demo-shared</artifactId>
-  			<version>${revision}</version>
-  		</dependency>
-		
-		<dependency>
-    		<groupId>commons-validator</groupId>
-    		<artifactId>commons-validator</artifactId>
-    		<version>1.8.0</version>
-		</dependency>
-		
-		<dependency>
-    		<groupId>io.jsonwebtoken</groupId>
-    		<artifactId>jjwt-impl</artifactId>
-    		<version>${jsonwebtoken.version}</version>
-		</dependency>
-			<dependency>
-    		<groupId>io.jsonwebtoken</groupId>
-    		<artifactId>jjwt-api</artifactId>
-    		<version>${jsonwebtoken.version}</version>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-cloud-demo-backend-utils</artifactId>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
-    		<groupId>io.jsonwebtoken</groupId>
-    		<artifactId>jjwt-jackson</artifactId>
-    		<version>${jsonwebtoken.version}</version>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-cloud-demo-shared</artifactId>
+			<version>${revision}</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.11.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jsonwebtoken.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jsonwebtoken.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jsonwebtoken.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>

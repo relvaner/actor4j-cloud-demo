@@ -8,7 +8,7 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>actor4j-cloud-demo-backend-server</artifactId>
-	
+
 	<properties>
 		<main.verticle>io.actor4j.cloud.demo.backend.server.starter.MainVerticle</main.verticle>
 	</properties>
@@ -29,32 +29,32 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.19.0</version>
+			<version>2.23.0</version>
 		</dependency>
-		
+
 		<dependency>
-    		<groupId>io.jsonwebtoken</groupId>
-    		<artifactId>jjwt-impl</artifactId>
-    		<version>${jsonwebtoken.version}</version>
-		</dependency>
-			<dependency>
-    		<groupId>io.jsonwebtoken</groupId>
-    		<artifactId>jjwt-api</artifactId>
-    		<version>${jsonwebtoken.version}</version>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jsonwebtoken.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>io.jsonwebtoken</groupId>
-    		<artifactId>jjwt-jackson</artifactId>
-    		<version>${jsonwebtoken.version}</version>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jsonwebtoken.version}</version>
 		</dependency>
-		
 		<dependency>
-    		<groupId>com.mikesamuel</groupId>
-    		<artifactId>json-sanitizer</artifactId>
-    		<version>1.2.3</version>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jsonwebtoken.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mikesamuel</groupId>
+			<artifactId>json-sanitizer</artifactId>
+			<version>1.2.3</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -82,19 +82,23 @@
 						</goals>
 						<configuration>
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
 										<Main-Class>io.vertx.core.Launcher</Main-Class>
 										<Main-Verticle>${main.verticle}</Main-Verticle>
 										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-									<resource>META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>
+										META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
 								</transformer>
 							</transformers>
 							<artifactSet></artifactSet>
-							<outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
+							<outputFile>
+								${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
 						</configuration>
 					</execution>
 				</executions>

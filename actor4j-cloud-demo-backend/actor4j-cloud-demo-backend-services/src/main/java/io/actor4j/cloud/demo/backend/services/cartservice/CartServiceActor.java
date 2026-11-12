@@ -17,6 +17,7 @@ package io.actor4j.cloud.demo.backend.services.cartservice;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.CartDTO;
@@ -29,13 +30,13 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.utils.ActorCacheHandler;
-import io.actor4j.data.access.pods.utils.PodVolatileActorCacheManager;
 import io.vertx.core.json.JsonObject;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class CartServiceActor extends PodChildActor {
-	protected PodVolatileActorCacheManager<String, CartEntity> manager;
+//	protected PodVolatileActorCacheManager<String, CartEntity> manager;
+	protected Map<String, CartEntity> manager;
 	protected ActorCacheHandler<String, CartEntity> handler;
 	
 	public CartServiceActor(UUID groupId, PodContext context) {
@@ -46,17 +47,19 @@ public class CartServiceActor extends PodChildActor {
 	public void preStart() {
 		setAlias(context.domain());
 		
-		manager = new PodVolatileActorCacheManager<>(this, "volatile-cache-"+context.domain(), groupId);
-		manager.createReplica(500, context);
+//		manager = new PodVolatileActorCacheManager<>(this, "volatile-cache-"+context.domain(), groupId);
+//		manager.createReplica(500, context);
 		
-		handler = new ActorCacheHandler<>((msg) -> manager.get(msg));
+//		handler = new ActorCacheHandler<>((msg) -> manager.get(msg));
+		
+		manager = new HashMap<>();
 	}
 
 	@Override
 	public void receive(ActorMessage<?> message) {
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
 		
-		if (!handler.match(message))
+//		if (!handler.match(message))
 			handleRequest(message);
 	}
 	
@@ -67,19 +70,25 @@ public class CartServiceActor extends PodChildActor {
 			String user_id = user.principal().getString("sub");
 			
 			if (message.tag()==PodRequestMethod.GET) {
-				handler.define(message.interaction(), (pair) -> {
-					JsonObject result = new JsonObject();
-					if (pair.b()!=null)
-						result = JsonObject.mapFrom(new CartDTO(pair.b().user_id(), new LinkedList<>(pair.b().items().values())));
-					tell(result, PodStatus.OK, message.source(), message.interaction());
-				});
-				manager.get(user_id, message.interaction());	
+//				handler.define(message.interaction(), (pair) -> {
+//					JsonObject result = new JsonObject();
+//					if (pair.b()!=null)
+//						result = JsonObject.mapFrom(new CartDTO(pair.b().user_id(), new LinkedList<>(pair.b().items().values())));
+//					tell(result, PodStatus.OK, message.source(), message.interaction());
+//				});
+//				manager.get(user_id, message.interaction());	
+				CartEntity cart = manager.get(user_id);
+				JsonObject result = new JsonObject();
+				if (cart!=null)
+					result = JsonObject.mapFrom(new CartDTO(cart.user_id(), new LinkedList<>(cart.items().values())));
+				tell(result, PodStatus.OK, message.source(), message.interaction());
 			}
 			else if (message.tag()==PodRequestMethod.POST && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
 					CartItemDTO cartItem = ((JsonObject)message.value()).mapTo(CartItemDTO.class);
-					handler.define(message.interaction(), (pair) -> {
-						CartEntity cart = pair.b();
+//					handler.define(message.interaction(), (pair) -> {
+//						CartEntity cart = pair.b();
+						CartEntity cart = manager.get(user_id);
 						if (cart==null)
 							cart = new CartEntity(user_id, new HashMap<>());
 						CartItemDTO found = cart.items().get(cartItem.product_id());
@@ -88,9 +97,10 @@ public class CartServiceActor extends PodChildActor {
 								new CartItemDTO(cartItem.product_id(), cartItem.quantity()+found.quantity()));
 						else
 							cart.items().put(cartItem.product_id(), cartItem);
-						manager.set(user_id, cart);
-					});
-					manager.get(user_id, message.interaction());
+//						manager.set(user_id, cart);
+						manager.put(user_id, cart);
+//					});
+//					manager.get(user_id, message.interaction());
 					tell(null, PodStatus.ACCEPTED, message.source(), message.interaction());
 				}
 				catch (IllegalArgumentException e) {
@@ -99,7 +109,8 @@ public class CartServiceActor extends PodChildActor {
 				}
 			}
 			else if (message.tag()==PodRequestMethod.DELETE) {
-				manager.del(user_id);
+//				manager.del(user_id);
+				manager.remove(user_id);
 				tell(null, PodStatus.ACCEPTED, message.source(), message.interaction());
 			}
 			else

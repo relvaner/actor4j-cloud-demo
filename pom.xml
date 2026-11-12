@@ -6,7 +6,7 @@
 	<artifactId>actor4j-cloud-demo</artifactId>
 	<version>${revision}</version>
 	<packaging>pom</packaging>
-	
+
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Actor4j is an actor-oriented Java framework.</description>
 	<url>https://github.com/relvaner/actor4j-cloud-demo</url>
@@ -19,60 +19,54 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<developers>
 		<developer>
 			<name>David A. Bauer</name>
 			<email>relvaner.github@gmail.com</email>
 		</developer>
 	</developers>
-	
-	<scm>
-		<connection>scm:git:https://github.com/relvaner/actor4j-cloud-demo.git</connection>
-		<developerConnection>scm:git:git@github.com:relvaner/actor4j-cloud-demo.git</developerConnection>
-		<url>https://github.com/relvaner/actor4j-cloud-demo/</url>
-	</scm>
-	
+
 	<properties>
 		<revision>1.1.0</revision>
-		<actor4j.core.version>2.4.0</actor4j.core.version>
-		<actor4j.version>2.4.0</actor4j.version>
-		<vertx.version>4.5.15</vertx.version>
-		<jsonwebtoken.version>0.12.6</jsonwebtoken.version>
-		<junit.version>5.13.1</junit.version>
+		<actor4j.core.version>2.5.0</actor4j.core.version>
+		<actor4j.version>2.5.0</actor4j.version>
+		<vertx.version>4.5.36</vertx.version>
+		<jsonwebtoken.version>0.12.7</jsonwebtoken.version>
+		<junit.version>5.14.4</junit.version>
 		<maven.compiler.source>21</maven.compiler.source>
-  		<maven.compiler.target>21</maven.compiler.target>
+		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<build>
 		<plugins>
-    		<plugin>
-      			<groupId>org.codehaus.mojo</groupId>
-      			<artifactId>flatten-maven-plugin</artifactId>
-      			<version>1.7.0</version>
-      			<configuration>
-        			<flattenMode>resolveCiFriendliesOnly</flattenMode>
-        			<updatePomFile>true</updatePomFile>
-      			</configuration>
-      			<executions>
-        			<execution>
-          				<id>flatten</id>
-          				<phase>verify</phase>
-          				<goals>
-            				<goal>flatten</goal>
-          				</goals>
-        			</execution>
-      			</executions>
-    		</plugin>
-    	</plugins>
-    </build>
-	
-  	<modules>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.9.0</version>
+				<configuration>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+					<updatePomFile>true</updatePomFile>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
 		<module>actor4j-cloud-demo-backend</module>
-  		<module>actor4j-cloud-demo-frontend</module>
-  		
+		<module>actor4j-cloud-demo-frontend</module>
+
 		<module>actor4j-cloud-demo-single-instance</module>
 		<module>actor4j-cloud-demo-shared</module>
-  	</modules>
+	</modules>
 </project>
