@@ -19,6 +19,13 @@ import java.util.List;
 
 public record ProductDTO(String id, String name, String description, String picture, MoneyDTO price_usd,
 		List<String> categories) {
+	// required fields, e.g. an empty answer {} is no product
+	public ProductDTO {
+		if (id==null)
+			throw new IllegalArgumentException("id is required");
+		if (price_usd==null)
+			throw new IllegalArgumentException("price_usd is required");
+	}
 
 	public ProductDTO shallowCopy(String picture) {
 		return new ProductDTO(id, name, description, picture, price_usd, categories);

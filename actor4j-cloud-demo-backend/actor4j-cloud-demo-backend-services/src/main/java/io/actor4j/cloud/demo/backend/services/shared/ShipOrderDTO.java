@@ -24,5 +24,8 @@ public record ShipOrderDTO(Address address, List<CartItemDTO> items) {
 			throw new IllegalArgumentException("address is required");
 		if (items==null)
 			throw new IllegalArgumentException("items is required");
+		for (CartItemDTO item : items)
+			if (item==null)
+				throw new IllegalArgumentException("items must not contain null");
 	}
 }

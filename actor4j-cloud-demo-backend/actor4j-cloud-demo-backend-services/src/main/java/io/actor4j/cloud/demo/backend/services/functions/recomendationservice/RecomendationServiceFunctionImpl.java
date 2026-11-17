@@ -69,7 +69,7 @@ public class RecomendationServiceFunctionImpl {
 			else
 				result = Reply.failure(message.value(), message.tag()>=PodStatus.BAD_REQUEST ? message.tag() : PodStatus.INTERNAL_SERVER_ERROR, interaction);
 		}
-		else if (message.tag()==PodRequestMethod.GET_ALL && message.value() instanceof JsonArray product_ids) {
+		else if (message.tag()==PodRequestMethod.GET_ALL && message.value() instanceof JsonArray product_ids && productIds(product_ids)) {
 			handlerMap.put(interaction, (array) -> {
 				return Reply.of(generateRecomendations(product_ids, array), PodStatus.OK, interaction);
 			});
@@ -84,6 +84,14 @@ public class RecomendationServiceFunctionImpl {
 		return result;
 	}
 	
+	// only strings (product ids)
+	protected boolean productIds(JsonArray array) {
+		for (Object value : array)
+			if (!(value instanceof String))
+				return false;
+		return true;
+	}
+
 	protected JsonArray generateRecomendations(JsonArray product_id_arr, JsonArray products_arr) {
 		Set<String> cat_productIds = new HashSet<>(product_id_arr.mapTo(String.class));
 		List<ProductDTO> products = products_arr.mapTo(ProductDTO.class);
@@ -92,8 +100,12 @@ public class RecomendationServiceFunctionImpl {
 			productIds.add(product.id());
 		productIds.removeAll(cat_productIds);
 		
-		List<String> result = random.ints(MAX_RECOMENDATIONS, 0, productIds.size()).mapToObj(i -> new ArrayList<>(productIds).get(i)).collect(Collectors.toList());
-		
+		if (productIds.isEmpty())
+			return JsonArray.create(); // no candidates left
+
+		List<String> candidates = new ArrayList<>(productIds);
+		List<String> result = random.ints(MAX_RECOMENDATIONS, 0, candidates.size()).mapToObj(candidates::get).collect(Collectors.toList());
+
 		return JsonArray.create(result);
 	}
 }

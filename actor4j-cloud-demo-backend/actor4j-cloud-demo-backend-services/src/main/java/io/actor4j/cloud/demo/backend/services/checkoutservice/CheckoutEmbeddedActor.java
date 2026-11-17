@@ -132,6 +132,8 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 		request(item.product_id(), PodRequestMethod.GET, PodAlias.ProductCatalogService);
 
 		return answer("FETCH_PRODUCTS", PodAlias.ProductCatalogService, (msg) -> {
+			if (msg.tag()==PodStatus.NOT_FOUND)
+				return fail("Product "+item.product_id()+" is not available", PodStatus.NOT_ACCEPTABLE);
 			ProductDTO product = read(msg, ProductDTO.class);
 			if (product==null)
 				return fail("_008");
@@ -164,6 +166,8 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 		request(JsonObject.create(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.ACTION_1, PodAlias.ShippingService);
 
 		return answer("QUOTE_SHIPPING", PodAlias.ShippingService, (msg) -> {
+			if (msg.tag()==PodStatus.BAD_REQUEST)
+				return fail(msg.value(), PodStatus.NOT_ACCEPTABLE); // e.g. too many items to ship
 			orderResult.shipping_cost = read(msg, MoneyDTO.class);
 			return orderResult.shipping_cost!=null ? convertShippingCost() : fail("_014");
 		});
@@ -251,7 +255,19 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 		return ActorBehaviour.named(step, behaviours.await(
 			(msg) -> service.equalsIgnoreCase(msg.domain()),
 			ActorBehaviour.ignore(),
-			onAnswer,
+			(msg) -> {
+				// an error ends only this order, not the host with all other orders
+				try {
+					return onAnswer.apply(msg);
+				}
+				catch (ArithmeticException e) {
+					return fail("_025: amount out of range", PodStatus.BAD_REQUEST);
+				}
+				catch (RuntimeException e) {
+					logger().log(ERROR, String.format("[%s] %s: %s", PodAlias.CheckoutService, step, e));
+					return fail("_026");
+				}
+			},
 			STEP_TIMEOUT, TimeUnit.SECONDS,
 			() -> fail(String.format("_024: %s, no answer of %s", step, service), PodStatus.SERVICE_UNAVAILABLE)));
 	}

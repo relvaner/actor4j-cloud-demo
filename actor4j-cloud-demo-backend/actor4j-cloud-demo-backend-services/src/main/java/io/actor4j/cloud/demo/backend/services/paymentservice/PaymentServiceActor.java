@@ -15,8 +15,7 @@
  */
 package io.actor4j.cloud.demo.backend.services.paymentservice;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.YearMonth;
 import java.util.UUID;
 
 import org.apache.commons.validator.routines.CreditCardValidator;
@@ -76,26 +75,30 @@ public class PaymentServiceActor extends PodChildActor {
 	protected Pair<Object, Integer> validate(ChargeDTO charge) {
 		Object result = null;
 		int tag = PodStatus.OK;
-		
-		Date now = new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(now);
-		int currentMonth = calendar.get(Calendar.MONTH);
-		int currentYear = calendar.get(Calendar.YEAR);
-		
+
+		int month = charge.credit_card().credit_card_expiration_month();
 		CreditCardValidator ccv = new CreditCardValidator(CreditCardValidator.MASTERCARD + CreditCardValidator.VISA);
-		if (!ccv.isValid(charge.credit_card().credit_card_number())) {
+		if (charge.amount().units()<0 || charge.amount().nanos()<0 || (charge.amount().units()==0 && charge.amount().nanos()==0)) {
+			result = "Amount must be positive";
+			tag = PodStatus.BAD_REQUEST;
+		}
+		else if (!ccv.isValid(charge.credit_card().credit_card_number())) {
 			result = "Credit card is not valid or accepted";
 			tag = PodStatus.NOT_ACCEPTABLE;
 		}
-		else if ((currentYear * 12 + currentMonth) > (charge.credit_card().credit_card_expiration_year() * 12 + charge.credit_card().credit_card_expiration_month())) {
+		else if (month<1 || month>12) {
+			result = "Credit card expiration month is invalid";
+			tag = PodStatus.NOT_ACCEPTABLE;
+		}
+		// valid up to and including the expiration month
+		else if (YearMonth.now().isAfter(YearMonth.of(charge.credit_card().credit_card_expiration_year(), month))) {
 			result = "Credit card has expired";
 			tag = PodStatus.NOT_ACCEPTABLE;
 		}
-		
+
 		return Pair.of(result, tag);
 	}
-	
+
 	protected Pair<Object, Integer> charge(ChargeDTO charge) {
 		Pair<Object, Integer> result = validate(charge);
 		

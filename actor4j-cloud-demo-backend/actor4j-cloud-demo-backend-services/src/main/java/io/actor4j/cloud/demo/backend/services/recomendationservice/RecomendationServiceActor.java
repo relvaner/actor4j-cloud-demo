@@ -59,7 +59,9 @@ public class RecomendationServiceActor extends PodChildActor {
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
 		
 		if (!handler.match(message)) {
-			if (message.tag()==PodRequestMethod.GET_ALL && message.value()!=null && message.value() instanceof JsonArray) {
+			if (message.tag()==PodRequestMethod.GET_ALL && message.value() instanceof JsonArray array && !productIds(array))
+				tell("Array of product ids expected", PodStatus.BAD_REQUEST, message.source(), message.interaction());
+			else if (message.tag()==PodRequestMethod.GET_ALL && message.value()!=null && message.value() instanceof JsonArray) {
 				handler.define(message.interaction(),  (array, msg) -> {
 					tell(generateRecomendations((JsonArray)message.value(), array), PodStatus.OK, message.source(), message.interaction());
 				});
@@ -70,6 +72,14 @@ public class RecomendationServiceActor extends PodChildActor {
 		}
 	}
 	
+	// only strings (product ids)
+	protected boolean productIds(JsonArray array) {
+		for (Object value : array)
+			if (!(value instanceof String))
+				return false;
+		return true;
+	}
+
 	protected JsonArray generateRecomendations(JsonArray product_id_arr, JsonArray products_arr) {
 		Set<String> cat_productIds = new HashSet<>(product_id_arr.mapTo(String.class));
 		List<ProductDTO> products = products_arr.mapTo(ProductDTO.class);

@@ -64,16 +64,16 @@ public class ProductCatalogServiceActor extends PodChildActor {
 		if (message.source()==productCatalog && message.value()!=null && message.value() instanceof ProductCatalogDTO)
 			generateProductCatalogMap((ProductCatalogDTO)message.value());
 		else {
-			if (message.tag()==PodRequestMethod.GET && message.value()!=null && message.value() instanceof String) {
-				JsonObject result = null;
-				
-				ProductDTO product = getProduct(message.valueAsString());
-				if (product!=null)
-					result = JsonObject.create(product);
+			if (message.tag()==PodRequestMethod.GET) {
+				if (message.value() instanceof String id) {
+					ProductDTO product = getProduct(id);
+					if (product!=null)
+						tell(JsonObject.create(product), PodStatus.OK, message.source(), message.interaction());
+					else
+						tell("Product not found", PodStatus.NOT_FOUND, message.source(), message.interaction());
+				}
 				else
-					result = JsonObject.create();
-				
-				tell(result, PodStatus.OK, message.source(), message.interaction());
+					tell("Product id expected", PodStatus.BAD_REQUEST, message.source(), message.interaction());
 			}
 			else {
 				Object result = null;

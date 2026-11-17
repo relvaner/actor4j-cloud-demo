@@ -87,10 +87,17 @@ public class CartServiceActor extends PodChildActor {
 						// a new, unmodifiable cart, the cached one is shared with the other replicas
 						Map<String, CartItemDTO> items = pair.b()!=null ? new HashMap<>(pair.b().items()) : new HashMap<>();
 						CartItemDTO found = items.get(cartItem.product_id());
-						if (found!=null)
-							items.put(cartItem.product_id(), new CartItemDTO(cartItem.product_id(), cartItem.quantity()+found.quantity()));
-						else
-							items.put(cartItem.product_id(), cartItem);
+						try {
+							// at most MAX_QUANTITY per product, an error must not restart the actor (the cache replica is its child)
+							if (found!=null)
+								items.put(cartItem.product_id(), new CartItemDTO(cartItem.product_id(), cartItem.quantity()+found.quantity()));
+							else
+								items.put(cartItem.product_id(), cartItem);
+						}
+						catch (IllegalArgumentException e) {
+							tell(RequestError.reason(e), PodStatus.BAD_REQUEST, message.source(), message.interaction());
+							return;
+						}
 						manager.set(user_id, new CartEntity(user_id, Map.copyOf(items)));
 
 						tell(null, PodStatus.ACCEPTED, message.source(), message.interaction());

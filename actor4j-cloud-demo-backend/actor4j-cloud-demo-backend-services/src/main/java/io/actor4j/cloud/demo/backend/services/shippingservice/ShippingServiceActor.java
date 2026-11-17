@@ -83,20 +83,22 @@ public class ShippingServiceActor extends PodChildActor {
 			tell(null, PodStatus.METHOD_NOT_ALLOWED, message.source(), message.interaction());
 	}
 	
+	protected static final double MAX_QUOTE = 1_000_000_000; // USD
+
 	protected MoneyDTO quote(ShipOrderDTO shipOrder) {
-		int count = 0;
+		long count = 0;
 		for (CartItemDTO item : shipOrder.items())
 			count += item.quantity();
-		
+
 		double quote = quoteByCount(count);
-		
-		double integral = Math.floor(quote);
-		double fractional = quote - integral;
-		
-		return new MoneyDTO("USD", (int)integral, (int)Math.round(fractional*100)* 10_000_000);
+		if (!Double.isFinite(quote) || quote>MAX_QUOTE)
+			throw new IllegalArgumentException("too many items to ship");
+
+		long cents = Math.round(quote*100); // e.g. 0.995 -> 1.00 and not 0 + 100 cents
+		return new MoneyDTO("USD", cents/100, (int)(cents%100)*10_000_000);
 	}
-	
-	protected double quoteByCount(int count) {
+
+	protected double quoteByCount(long count) {
 		if (count==0)
 			return 0;
 		else

@@ -22,12 +22,12 @@ public final class RequestError {
 	private RequestError() {
 	}
 
-	// the message of the validation in a DTO (innermost IllegalArgumentException), else "invalid request"
+	// the message of the validation (innermost IllegalArgumentException, e.g. in a DTO), else "invalid request"
 	public static String reason(Throwable e) {
 		Throwable root = e;
 		while (root.getCause()!=null && root.getCause()!=root)
 			root = root.getCause();
 
-		return root!=e && root instanceof IllegalArgumentException && root.getMessage()!=null ? root.getMessage() : INVALID_REQUEST;
+		return root instanceof IllegalArgumentException && root.getMessage()!=null ? root.getMessage() : INVALID_REQUEST;
 	}
 }

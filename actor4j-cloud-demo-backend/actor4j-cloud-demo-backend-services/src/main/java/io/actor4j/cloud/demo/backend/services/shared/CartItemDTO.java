@@ -16,11 +16,13 @@
 package io.actor4j.cloud.demo.backend.services.shared;
 
 public record CartItemDTO(String product_id, int quantity) {
+	public static final int MAX_QUANTITY = 1000; // per product in the cart
+
 	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
 	public CartItemDTO {
 		if (product_id==null)
 			throw new IllegalArgumentException("product_id is required");
-		if (quantity<1)
-			throw new IllegalArgumentException("quantity must be at least 1");
+		if (quantity<1 || quantity>MAX_QUANTITY)
+			throw new IllegalArgumentException("quantity must be between 1 and "+MAX_QUANTITY);
 	}
 }
