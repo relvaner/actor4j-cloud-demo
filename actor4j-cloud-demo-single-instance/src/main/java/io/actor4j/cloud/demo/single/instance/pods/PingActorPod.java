@@ -19,48 +19,14 @@ package io.actor4j.cloud.demo.single.instance.pods;
 import java.util.UUID;
 
 import io.actor4j.cloud.demo.single.instance.actors.PingActor;
-import io.actor4j.core.id.ActorId;
-import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.pods.ActorPod;
-import io.actor4j.core.pods.RemotePodMessage;
-import io.actor4j.core.pods.actors.DefaultPodActor;
-import io.actor4j.core.pods.actors.RemoteHandlerPodActor;
-import io.actor4j.core.pods.actors.PodActor;
+import io.actor4j.core.pods.DefaultRemoteActorPod;
+import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.utils.ActorFactory;
 
-public class PingActorPod extends ActorPod {
+public class PingActorPod extends DefaultRemoteActorPod {
 	@Override
-	public PodActor create() {
-		return new DefaultPodActor((groupId, context) -> new RemoteHandlerPodActor(domain(), groupId, context) {
-				@Override
-				public void handle(ActorMessage<?> message, UUID interaction) {
-					sendViaAlias(ActorMessage.create(message.value(), message.tag(), self(), null, interaction, "", ""), getAbsoluteAlias("ping"));
-				}
-
-				@Override
-				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, ActorId dest, UUID interaction) {
-					tell(message.value(), message.tag(), dest, interaction);
-				}
-
-				@Override
-				public void handle(RemotePodMessage remoteMessage, UUID interaction) {
-					sendViaAlias(ActorMessage.create(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), self(), null, interaction, "", ""), getAbsoluteAlias("ping"));
-				}
-
-				@Override
-				public Object callback(ActorMessage<?> message, RemotePodMessage remoteMessage) {
-					return message.value();
-				}
-			}) {
-			@Override
-			public void register() {
-				addChild(() -> new PingActor(groupId, getContext()));
-			}
-
-			@Override
-			public void receive(ActorMessage<?> message) {
-				unhandled(message);
-			}
-		};
+	public ActorFactory factory(UUID groupId, PodContext context) {
+		return () -> new PingActor(groupId, context);
 	}
 
 	@Override
