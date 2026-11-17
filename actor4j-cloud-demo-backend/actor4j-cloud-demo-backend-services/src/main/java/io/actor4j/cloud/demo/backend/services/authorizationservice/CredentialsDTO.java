@@ -16,4 +16,11 @@
 package io.actor4j.cloud.demo.backend.services.authorizationservice;
 
 public record CredentialsDTO(String username, String password) {
+	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
+	public CredentialsDTO {
+		if (username==null)
+			throw new IllegalArgumentException("username is required");
+		if (password==null)
+			throw new IllegalArgumentException("password is required");
+	}
 }

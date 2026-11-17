@@ -10,8 +10,6 @@
 
 	<modules>
 		<module>actor4j-cloud-demo-backend-server</module>
-		
 		<module>actor4j-cloud-demo-backend-services</module>
-		<module>actor4j-cloud-demo-backend-utils</module>
 	</modules>
 </project>

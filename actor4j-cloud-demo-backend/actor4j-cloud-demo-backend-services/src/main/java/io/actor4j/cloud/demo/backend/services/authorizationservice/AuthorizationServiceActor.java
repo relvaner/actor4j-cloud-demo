@@ -19,6 +19,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.UUID;
 
+import io.actor4j.cloud.demo.shared.utils.RequestError;
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.immutable.ImmutableObject;
 import io.actor4j.core.messages.ActorMessage;
@@ -70,7 +71,7 @@ public class AuthorizationServiceActor extends PodChildActor {
 			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
-				result = e.getCause().getMessage();
+				result = RequestError.reason(e);
 				tag = PodStatus.BAD_REQUEST;
 			}
 			

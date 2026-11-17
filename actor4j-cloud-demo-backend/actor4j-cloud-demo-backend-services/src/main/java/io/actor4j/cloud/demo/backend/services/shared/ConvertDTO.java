@@ -16,4 +16,11 @@
 package io.actor4j.cloud.demo.backend.services.shared;
 
 public record ConvertDTO(MoneyDTO money, String currency_code) {
+	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
+	public ConvertDTO {
+		if (money==null)
+			throw new IllegalArgumentException("money is required");
+		if (currency_code==null)
+			throw new IllegalArgumentException("currency_code is required");
+	}
 }

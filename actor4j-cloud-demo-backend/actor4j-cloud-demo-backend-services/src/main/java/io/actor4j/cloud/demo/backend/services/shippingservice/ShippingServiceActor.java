@@ -21,6 +21,7 @@ import java.util.UUID;
 import io.actor4j.cloud.demo.backend.services.shared.CartItemDTO;
 import io.actor4j.cloud.demo.backend.services.shared.MoneyDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ShipOrderDTO;
+import io.actor4j.cloud.demo.shared.utils.RequestError;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
@@ -72,7 +73,7 @@ public class ShippingServiceActor extends PodChildActor {
 			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
-				result = e.getCause().getMessage();
+				result = RequestError.reason(e);
 				tag = PodStatus.BAD_REQUEST;
 			}
 			

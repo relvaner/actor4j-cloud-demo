@@ -18,4 +18,11 @@ package io.actor4j.cloud.demo.backend.services.shared;
 import java.util.List;
 
 public record ShipOrderDTO(Address address, List<CartItemDTO> items) {
+	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
+	public ShipOrderDTO {
+		if (address==null)
+			throw new IllegalArgumentException("address is required");
+		if (items==null)
+			throw new IllegalArgumentException("items is required");
+	}
 }

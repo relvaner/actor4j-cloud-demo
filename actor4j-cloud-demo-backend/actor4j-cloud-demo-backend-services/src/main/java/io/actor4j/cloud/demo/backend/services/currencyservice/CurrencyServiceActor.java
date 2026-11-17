@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.ConvertDTO;
 import io.actor4j.cloud.demo.backend.services.shared.MoneyDTO;
+import io.actor4j.cloud.demo.shared.utils.RequestError;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableMap;
 import io.actor4j.core.messages.ActorMessage;
@@ -87,7 +88,7 @@ public class CurrencyServiceActor extends PodChildActor {
 				}
 				catch (IllegalArgumentException e) {
 					e.printStackTrace();
-					result = e.getCause().getMessage();
+					result = RequestError.reason(e);
 					tag = PodStatus.BAD_REQUEST;
 				}
 			}

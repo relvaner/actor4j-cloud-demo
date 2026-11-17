@@ -32,6 +32,7 @@ import io.actor4j.cloud.demo.backend.services.shared.OrderItem;
 import io.actor4j.cloud.demo.backend.services.shared.OrderResultDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ShipOrderDTO;
+import io.actor4j.cloud.demo.shared.utils.RequestError;
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.actors.behaviour.ActorBehaviour;
 import io.actor4j.core.actors.behaviour.BehaviourEmbeddedActor;
@@ -96,7 +97,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 			order = value.mapTo(OrderDTO.class);
 		}
 		catch (IllegalArgumentException e) {
-			return fail("_002:"+(e.getCause()!=null ? e.getCause().getMessage() : e.getMessage()), PodStatus.BAD_REQUEST);
+			return fail("_002:"+RequestError.reason(e), PodStatus.BAD_REQUEST);
 		}
 		if (order==null)
 			return fail("_001", PodStatus.INTERNAL_SERVER_ERROR);

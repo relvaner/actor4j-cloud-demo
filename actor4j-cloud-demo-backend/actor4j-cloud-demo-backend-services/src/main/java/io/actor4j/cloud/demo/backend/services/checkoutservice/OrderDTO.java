@@ -19,4 +19,15 @@ import io.actor4j.cloud.demo.backend.services.shared.Address;
 import io.actor4j.cloud.demo.backend.services.shared.CreditCardInfo;
 
 public record OrderDTO(String user_currency, Address address, String email, CreditCardInfo credit_card) {
+	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
+	public OrderDTO {
+		if (user_currency==null)
+			throw new IllegalArgumentException("user_currency is required");
+		if (address==null)
+			throw new IllegalArgumentException("address is required");
+		if (email==null)
+			throw new IllegalArgumentException("email is required");
+		if (credit_card==null)
+			throw new IllegalArgumentException("credit_card is required");
+	}
 }

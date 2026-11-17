@@ -22,6 +22,7 @@ import java.util.UUID;
 import org.apache.commons.validator.routines.CreditCardValidator;
 
 import io.actor4j.cloud.demo.backend.services.shared.ChargeDTO;
+import io.actor4j.cloud.demo.shared.utils.RequestError;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
@@ -62,7 +63,7 @@ public class PaymentServiceActor extends PodChildActor {
 			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
-				result = e.getCause().getMessage();
+				result = RequestError.reason(e);
 				tag = PodStatus.BAD_REQUEST;
 			}
 			

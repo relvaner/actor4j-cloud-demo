@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.CartDTO;
 import io.actor4j.cloud.demo.backend.services.shared.CartItemDTO;
+import io.actor4j.cloud.demo.shared.utils.RequestError;
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
@@ -98,7 +99,7 @@ public class CartServiceActor extends PodChildActor {
 				}
 				catch (IllegalArgumentException e) {
 					e.printStackTrace();
-					tell(e.getMessage(), PodStatus.BAD_REQUEST, message.source(), message.interaction());
+					tell(RequestError.reason(e), PodStatus.BAD_REQUEST, message.source(), message.interaction());
 				}
 			}
 			else if (message.tag()==PodRequestMethod.DELETE) {

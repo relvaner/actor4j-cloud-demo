@@ -16,4 +16,11 @@
 package io.actor4j.cloud.demo.backend.services.shared;
 
 public record ChargeDTO(MoneyDTO amount, CreditCardInfo credit_card) {
+	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
+	public ChargeDTO {
+		if (amount==null)
+			throw new IllegalArgumentException("amount is required");
+		if (credit_card==null)
+			throw new IllegalArgumentException("credit_card is required");
+	}
 }

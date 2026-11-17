@@ -18,6 +18,11 @@ package io.actor4j.cloud.demo.backend.services.shared;
 import io.actor4j.core.utils.DeepCopyable;
 
 public record MoneyDTO(String currency_code, int units, int nanos) implements DeepCopyable<MoneyDTO> {
+	// required fields, missing ones lead to BAD_REQUEST (IllegalArgumentException)
+	public MoneyDTO {
+		if (currency_code==null)
+			throw new IllegalArgumentException("currency_code is required");
+	}
 	public static final long NANOS_MOD = 1_000_000_000;
 	
 	@Override
