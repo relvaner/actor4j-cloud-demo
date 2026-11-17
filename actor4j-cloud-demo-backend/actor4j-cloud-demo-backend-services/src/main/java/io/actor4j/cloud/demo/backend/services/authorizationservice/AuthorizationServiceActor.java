@@ -53,7 +53,7 @@ public class AuthorizationServiceActor extends PodChildActor {
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
+		logger().log(DEBUG, String.format("[%s] tag=%d, interaction=%s", context.domain(), message.tag(), message.interaction())); // no payload: passwords, card data, addresses
 		
 		if (message.tag()==PodRequestMethod.POST && message.value()!=null && message.value() instanceof JsonObject) {
 			Object result = null;

@@ -44,12 +44,14 @@ public final class PodApiMapper {
 	private PodApiMapper() {
 	}
 
-	// a name (GET, ACTION_1, ...) becomes the internal pod request method, a number is passed through as own tag
+	// a name (GET, ACTION_1, ...) becomes the internal pod request method, a number is passed through as own tag,
+	// null if invalid (see allowed)
 	public static Integer method(Object value) {
+		Integer result = null;
 		if (value instanceof Number number)
-			return number.intValue();
+			result = number.intValue();
 		else if (value instanceof String str && !str.isBlank()) {
-			Integer result = METHODS.get(str.trim().toUpperCase());
+			result = METHODS.get(str.trim().toUpperCase());
 			if (result==null)
 				try {
 					result = Integer.valueOf(str.trim());
@@ -57,10 +59,15 @@ public final class PodApiMapper {
 				catch (NumberFormatException e) {
 					// empty
 				}
-			return result;
 		}
-		else
-			return null;
+
+		return result!=null && allowed(result) ? result : null;
+	}
+
+	// named pod request methods and own tags >= 0 outside the reserved range of actor4j,
+	// negative tags are system directives (e.g. stop, kill) and must not come from outside
+	public static boolean allowed(int tag) {
+		return METHODS.containsValue(tag) || (tag>=0 && (tag<RESERVED_RANGE_START || tag>=RESERVED_RANGE_END));
 	}
 
 	// replaces the tag of the request by the internal one, false if the tag is invalid

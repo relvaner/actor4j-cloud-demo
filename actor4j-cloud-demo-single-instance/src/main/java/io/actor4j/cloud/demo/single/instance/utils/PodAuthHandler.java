@@ -43,9 +43,13 @@ public abstract class PodAuthHandler implements AuthenticationHandler {
 		
 		String domain = rc.request().headers().get(PodHttpHeaders.X_POD_DOMAIN);
 		String podRequestMethodStr = rc.request().headers().get(PodHttpHeaders.X_POD_REQUEST_METHOD);
-		// name (GET, ACTION_1, ...) or own tag as number, 0 if invalid
+		// name (GET, ACTION_1, ...) or own tag as number
 		Integer method = PodApiMapper.method(podRequestMethodStr);
-		int podRequestMethod = method!=null ? method : 0;
+		if (method==null) {
+			badRequest(rc.response(), "Invalid request method!");
+			return;
+		}
+		int podRequestMethod = method;
 		
 		if (isUnknownMethod(domain, podRequestMethod))
 			methodNotAllowed(rc.response());
@@ -79,6 +83,12 @@ public abstract class PodAuthHandler implements AuthenticationHandler {
 		}
 		else
 			return false;
+	}
+
+	public void badRequest(HttpServerResponse response, String message) {
+		response.setStatusCode(400);
+		response.end(JsonObject.mapFrom(new RESTDefaultResponse(
+			RESTDefaultResponse.NO_SUCCESS, 400, new Pod(), "", message)).encodePrettily());
 	}
 
 	public void methodNotAllowed(HttpServerResponse response) {
