@@ -105,6 +105,42 @@
                 "nanos": 300000000
             },
             "categories": ["gardening"]
+        },
+        {
+            "id": "K4TQ8VNC2D",
+            "name": "Vintage Alarm Clock",
+            "description": "It rings loud enough to wake the neighbours. Snooze button included.",
+            "picture": "/static/img/products/alarm-clock.jpg",
+            "price_usd": {
+                "currency_code": "USD",
+                "units": 34,
+                "nanos": 900000000
+            },
+            "categories": ["vintage"]
+        },
+        {
+            "id": "B7XWQ2LM9P",
+            "name": "Wool Throw Blanket",
+            "description": "Soft, warm and heavy enough to make you skip the gym.",
+            "picture": "/static/img/products/wool-blanket.jpg",
+            "price_usd": {
+                "currency_code": "USD",
+                "units": 89,
+                "nanos": 0
+            },
+            "categories": ["home"]
+        },
+        {
+            "id": "R2HN6CJ8TV",
+            "name": "Brass Bike Bell",
+            "description": "Ring ring. Pedestrians will finally notice you, maybe.",
+            "picture": "/static/img/products/bike-bell.jpg",
+            "price_usd": {
+                "currency_code": "USD",
+                "units": 18,
+                "nanos": 500000000
+            },
+            "categories": ["cycling", "vintage"]
         }
     ]
 }
