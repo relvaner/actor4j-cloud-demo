@@ -28,7 +28,7 @@
 	</developers>
 
 	<properties>
-		<revision>1.1.0</revision>
+		<revision>1.2.0</revision>
 		<actor4j.core.version>2.5.0-beta.1</actor4j.core.version>
 		<actor4j.version>2.5.0</actor4j.version>
 		<vertx.version>4.5.36</vertx.version>
