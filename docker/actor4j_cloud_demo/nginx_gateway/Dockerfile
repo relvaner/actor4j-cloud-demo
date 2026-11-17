@@ -1,4 +1,3 @@
-FROM nginx:1.27.2
+FROM nginx:1.30-alpine
 
-COPY html /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf

@@ -1,8 +1,7 @@
-version: '3.1'
 services:
   nginx_gateway:
     image: nginx_gateway
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
   frontend:
@@ -10,7 +9,7 @@ services:
     environment:
       - ACTOR4J_CLOUD_DOCKER=true
       - ACTOR4J_CLOUD_CONTEXT_PATH=/demo
-    restart: always
+    restart: unless-stopped
   backend:
     image: backend
     environment:
@@ -18,4 +17,4 @@ services:
       - ACTOR4J_CLOUD_CONTEXT_PATH_FRONTEND=/demo
       # fixed key, so that tokens survive a restart (see .env.example)
       - ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR=${ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR:?set it in .env, see .env.example}
-    restart: always
+    restart: unless-stopped
