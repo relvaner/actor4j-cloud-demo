@@ -61,7 +61,7 @@
 			<plugins>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.16.0</version>
 					<configuration>
 						<source>${maven.compiler.source}</source>
 						<target>${maven.compiler.target}</target>
@@ -74,7 +74,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.2</version>
+				<version>3.6.2</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -105,7 +105,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
+				<version>3.7.0</version>
 				<configuration>
 					<mainClass>io.actor4j.cloud.demo.frontend.server.starter.Launcher</mainClass>
 				</configuration>
