@@ -29,7 +29,6 @@ import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.jsonwebtoken.Jwts;
 import io.actor4j.core.json.JsonObject;
-import io.actor4j.cloud.demo.shared.utils.Json;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -60,7 +59,7 @@ public class AuthorizationServiceActor extends PodChildActor {
 			int tag = PodStatus.OK;
 			
 			try {
-				CredentialsDTO credentials = Json.mapTo((JsonObject)message.value(), CredentialsDTO.class);
+				CredentialsDTO credentials = ((JsonObject)message.value()).mapTo(CredentialsDTO.class);
 				if (credentials!=null) {
 					if (verified(credentials))
 						// Simplified: Frontend ensures that "credentials.username" is a unique id

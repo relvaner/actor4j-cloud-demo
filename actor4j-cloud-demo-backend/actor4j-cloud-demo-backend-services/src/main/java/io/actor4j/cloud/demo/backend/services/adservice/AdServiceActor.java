@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
@@ -78,17 +77,17 @@ public class AdServiceActor extends PodChildActor {
 		Object result = null;
 		int tag = PodStatus.OK;
 		if (message.tag()==PodRequestMethod.GET_ALL) {
-			result = Utils.mapFrom(ads);
+			result = JsonArray.create(ads);
 		}
 		else if (message.tag()==QRY_SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
 			List<AdDTO> list = adsMap.get(message.valueAsString());
 			if (list!=null)
-				result = Utils.mapFrom(list);
+				result = JsonArray.create(list);
 			else
 				result = JsonArray.create();
 		}
 		else if (message.tag()==QRY_RANDOM_ADS)
-			result = Utils.mapFrom(getRandomAds());
+			result = JsonArray.create(getRandomAds());
 		else
 			tag = PodStatus.METHOD_NOT_ALLOWED;
 		

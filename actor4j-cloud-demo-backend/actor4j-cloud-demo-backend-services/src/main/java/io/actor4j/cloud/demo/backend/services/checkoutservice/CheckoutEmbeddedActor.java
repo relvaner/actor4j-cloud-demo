@@ -32,7 +32,6 @@ import io.actor4j.cloud.demo.backend.services.shared.OrderItem;
 import io.actor4j.cloud.demo.backend.services.shared.OrderResultDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
 import io.actor4j.cloud.demo.backend.services.shared.ShipOrderDTO;
-import io.actor4j.cloud.demo.shared.utils.Json;
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.actors.behaviour.ActorBehaviour;
 import io.actor4j.core.actors.behaviour.BehaviourEmbeddedActor;
@@ -94,7 +93,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 			return fail("_003", PodStatus.METHOD_NOT_ALLOWED);
 
 		try {
-			order = Json.mapTo(value, OrderDTO.class);
+			order = value.mapTo(OrderDTO.class);
 		}
 		catch (IllegalArgumentException e) {
 			return fail("_002:"+(e.getCause()!=null ? e.getCause().getMessage() : e.getMessage()), PodStatus.BAD_REQUEST);
@@ -147,7 +146,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 			return quoteShipping();
 
 		OrderItem item = orderResult.items.get(index);
-		request(Json.from(new ConvertDTO(item.cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService);
+		request(JsonObject.create(new ConvertDTO(item.cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService);
 
 		return answer("CONVERT_PRODUCT_PRICES", PodAlias.CurrencyService, (msg) -> {
 			MoneyDTO money = read(msg, MoneyDTO.class);
@@ -161,7 +160,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 
 	// (4)
 	protected ActorBehaviour quoteShipping() {
-		request(Json.from(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.ACTION_1, PodAlias.ShippingService);
+		request(JsonObject.create(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.ACTION_1, PodAlias.ShippingService);
 
 		return answer("QUOTE_SHIPPING", PodAlias.ShippingService, (msg) -> {
 			orderResult.shipping_cost = read(msg, MoneyDTO.class);
@@ -171,7 +170,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 
 	// (5)
 	protected ActorBehaviour convertShippingCost() {
-		request(Json.from(new ConvertDTO(orderResult.shipping_cost, order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService);
+		request(JsonObject.create(new ConvertDTO(orderResult.shipping_cost, order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService);
 
 		return answer("CONVERT_SHIPPING_COST", PodAlias.CurrencyService, (msg) -> {
 			orderResult.shipping_cost = read(msg, MoneyDTO.class);
@@ -192,7 +191,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 
 	// (7)
 	protected ActorBehaviour chargeCreditCard() {
-		request(Json.from(new ChargeDTO(orderResult.total_cost, order.credit_card())), PodRequestMethod.POST, PodAlias.PaymentService);
+		request(JsonObject.create(new ChargeDTO(orderResult.total_cost, order.credit_card())), PodRequestMethod.POST, PodAlias.PaymentService);
 
 		return answer("CHARGE_CREDIT_CARD", PodAlias.PaymentService, (msg) -> {
 			if (msg.tag()==PodStatus.OK && msg.value() instanceof String)
@@ -214,7 +213,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 
 	// (9)
 	protected ActorBehaviour shipOrder() {
-		request(Json.from(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.POST, PodAlias.ShippingService);
+		request(JsonObject.create(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.POST, PodAlias.ShippingService);
 
 		return answer("SHIP_ORDER", PodAlias.ShippingService, (msg) -> {
 			if (msg.tag()!=PodStatus.OK || !(msg.value() instanceof String trackingId))
@@ -227,13 +226,13 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 
 	// (10)
 	protected ActorBehaviour sendConfirmationEmail() {
-		request(Json.from(new OrderConfirmationDTO(order.email(), OrderResultDTO.of(orderResult))), PodRequestMethod.GET, PodAlias.EmailService);
+		request(JsonObject.create(new OrderConfirmationDTO(order.email(), OrderResultDTO.of(orderResult))), PodRequestMethod.GET, PodAlias.EmailService);
 
 		return answer("SEND_CONFIRMATION_EMAIL", PodAlias.EmailService, (msg) -> {
 			if (msg.tag()!=PodStatus.OK)
 				return fail("_023");
 
-			host().tell(Json.from(OrderResultDTO.of(orderResult)), PodStatus.OK, podHandler, interaction);
+			host().tell(JsonObject.create(OrderResultDTO.of(orderResult)), PodStatus.OK, podHandler, interaction);
 			return ActorBehaviour.stopped(); // done
 		});
 	}
@@ -260,7 +259,7 @@ public class CheckoutEmbeddedActor extends BehaviourEmbeddedActor {
 	protected <T> T read(ActorMessage<?> msg, Class<T> clazz) {
 		if (msg.tag()==PodStatus.OK && msg.value() instanceof JsonObject obj)
 			try {
-				return Json.mapTo(obj, clazz);
+				return obj.mapTo(clazz);
 			}
 			catch (IllegalArgumentException e) {
 				logger().log(ERROR, String.format("[%s] %s", PodAlias.CheckoutService, e.getMessage()));

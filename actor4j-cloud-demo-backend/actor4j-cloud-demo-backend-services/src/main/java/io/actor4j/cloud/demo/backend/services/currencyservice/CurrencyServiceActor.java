@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.ConvertDTO;
 import io.actor4j.cloud.demo.backend.services.shared.MoneyDTO;
-import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableMap;
 import io.actor4j.core.messages.ActorMessage;
@@ -33,7 +32,7 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.json.JsonObject;
-import io.actor4j.cloud.demo.shared.utils.Json;
+import io.actor4j.core.json.JsonArray;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -70,18 +69,18 @@ public class CurrencyServiceActor extends PodChildActor {
 			int tag = PodStatus.OK;
 			
 			if (message.tag()==PodRequestMethod.GET_ALL)
-				result = Utils.mapFrom(getCurrencies());
+				result = JsonArray.create(getCurrencies());
 			else if (message.tag()==CMD_CONVERT_BY_CURRENCY && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
-					ConvertDTO convert = Json.mapTo((JsonObject)message.value(), ConvertDTO.class);
+					ConvertDTO convert = ((JsonObject)message.value()).mapTo(ConvertDTO.class);
 					if (convert!=null) {
 						String currencyFrom = currencyDataMap.get(convert.money().currency_code());
 						String currencyTo   = currencyDataMap.get(convert.currency_code());
 						if (currencyFrom!=null && currencyTo!=null  && !currencyFrom.equals(currencyTo))
-							result = Json.from(
+							result = JsonObject.create(
 								MoneyDTO.convert(convert.money(), convert.currency_code(), Double.valueOf(currencyFrom), Double.valueOf(currencyTo)));
 						else
-							result = Json.from(convert.money());
+							result = JsonObject.create(convert.money());
 					}
 					else
 						tag = PodStatus.INTERNAL_SERVER_ERROR;

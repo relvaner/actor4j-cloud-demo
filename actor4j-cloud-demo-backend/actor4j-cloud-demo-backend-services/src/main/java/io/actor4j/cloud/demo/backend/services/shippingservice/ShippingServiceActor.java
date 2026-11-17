@@ -27,7 +27,6 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.json.JsonObject;
-import io.actor4j.cloud.demo.shared.utils.Json;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -56,7 +55,7 @@ public class ShippingServiceActor extends PodChildActor {
 			int tag = PodStatus.OK;
 			
 			try {
-				ShipOrderDTO shipOrder = Json.mapTo((JsonObject)message.value(), ShipOrderDTO.class);
+				ShipOrderDTO shipOrder = ((JsonObject)message.value()).mapTo(ShipOrderDTO.class);
 				if (shipOrder!=null) {
 					if (message.tag()==PodRequestMethod.POST) {
 						result = createTrackingId(String.format("%s %s %s", 
@@ -66,7 +65,7 @@ public class ShippingServiceActor extends PodChildActor {
 								));
 					}
 					else
-						result = Json.from(quote(shipOrder));
+						result = JsonObject.create(quote(shipOrder));
 				}
 				else
 					tag = PodStatus.INTERNAL_SERVER_ERROR;

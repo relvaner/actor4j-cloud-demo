@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.CartDTO;
 import io.actor4j.cloud.demo.backend.services.shared.CartItemDTO;
-import io.actor4j.cloud.demo.shared.utils.Json;
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
@@ -75,14 +74,14 @@ public class CartServiceActor extends PodChildActor {
 				handler.define(message.interaction(), (pair) -> {
 					JsonObject result = JsonObject.create();
 					if (pair.b()!=null)
-						result = Json.from(new CartDTO(pair.b().user_id(), new LinkedList<>(pair.b().items().values())));
+						result = JsonObject.create(new CartDTO(pair.b().user_id(), new LinkedList<>(pair.b().items().values())));
 					tell(result, PodStatus.OK, message.source(), message.interaction());
 				});
 				manager.get(user_id, message.interaction());
 			}
 			else if (message.tag()==PodRequestMethod.POST && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
-					CartItemDTO cartItem = Json.mapTo((JsonObject)message.value(), CartItemDTO.class);
+					CartItemDTO cartItem = ((JsonObject)message.value()).mapTo(CartItemDTO.class);
 					handler.define(message.interaction(), (pair) -> {
 						// a new, unmodifiable cart, the cached one is shared with the other replicas
 						Map<String, CartItemDTO> items = pair.b()!=null ? new HashMap<>(pair.b().items()) : new HashMap<>();

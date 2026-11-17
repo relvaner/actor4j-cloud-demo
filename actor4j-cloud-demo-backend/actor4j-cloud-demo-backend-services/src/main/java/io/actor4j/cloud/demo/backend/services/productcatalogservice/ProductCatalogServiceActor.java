@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
-import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -30,7 +29,6 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.json.JsonArray;
-import io.actor4j.cloud.demo.shared.utils.Json;
 import io.actor4j.core.json.JsonObject;
 
 import static io.actor4j.core.logging.ActorLogger.*;
@@ -71,7 +69,7 @@ public class ProductCatalogServiceActor extends PodChildActor {
 				
 				ProductDTO product = getProduct(message.valueAsString());
 				if (product!=null)
-					result = Json.from(product);
+					result = JsonObject.create(product);
 				else
 					result = JsonObject.create();
 				
@@ -82,19 +80,19 @@ public class ProductCatalogServiceActor extends PodChildActor {
 				int tag = PodStatus.OK;
 	
 				if (message.tag()==PodRequestMethod.GET_ALL) {
-					result = Utils.mapFrom(products);
+					result = JsonArray.create(products);
 				}
 				else if (message.tag()==QRY_SEARCH_BY_NAME_OR_DESCRIPTION && message.value()!=null && message.value() instanceof String) {
 					List<ProductDTO> list = searchByNameOrDescription(message.valueAsString());
 					if (list!=null)
-						result = Utils.mapFrom(list);
+						result = JsonArray.create(list);
 					else
 						result = JsonArray.create();
 				}
 				else if (message.tag()==QRY_SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
 					List<ProductDTO> list = productCatalogMap.get(message.valueAsString());
 					if (list!=null)
-						result = Utils.mapFrom(list);
+						result = JsonArray.create(list);
 					else
 						result = JsonArray.create();
 				}

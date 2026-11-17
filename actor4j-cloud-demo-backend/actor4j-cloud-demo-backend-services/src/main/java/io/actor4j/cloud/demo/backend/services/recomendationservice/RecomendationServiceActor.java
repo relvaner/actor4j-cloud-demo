@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import io.actor4j.cloud.demo.backend.services.helper.PodAlias;
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
-import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
@@ -72,8 +71,8 @@ public class RecomendationServiceActor extends PodChildActor {
 	}
 	
 	protected JsonArray generateRecomendations(JsonArray product_id_arr, JsonArray products_arr) {
-		Set<String> cat_productIds = new HashSet<>(Utils.mapTo(product_id_arr, String.class));
-		List<ProductDTO> products = Utils.mapTo(products_arr, ProductDTO.class);
+		Set<String> cat_productIds = new HashSet<>(product_id_arr.mapTo(String.class));
+		List<ProductDTO> products = products_arr.mapTo(ProductDTO.class);
 		Set<String> productIds = new HashSet<>();
 		for (ProductDTO product : products)
 			productIds.add(product.id());
@@ -85,7 +84,7 @@ public class RecomendationServiceActor extends PodChildActor {
 			limit = productIdsList.size();
 		
 		if (limit>0)
-			return Utils.mapFrom(random.ints(0, productIdsList.size()).mapToObj(i -> productIdsList.get(i)).distinct().limit(limit).collect(Collectors.toList()));
+			return JsonArray.create(random.ints(0, productIdsList.size()).mapToObj(i -> productIdsList.get(i)).distinct().limit(limit).collect(Collectors.toList()));
 		else
 			return JsonArray.create();
 	}

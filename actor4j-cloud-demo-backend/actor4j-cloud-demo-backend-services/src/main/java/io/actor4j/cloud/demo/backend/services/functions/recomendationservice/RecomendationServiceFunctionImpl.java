@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import io.actor4j.cloud.demo.backend.services.helper.PodAlias;
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
-import io.actor4j.cloud.demo.backend.utils.Utils;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -86,8 +85,8 @@ public class RecomendationServiceFunctionImpl {
 	}
 	
 	protected JsonArray generateRecomendations(JsonArray product_id_arr, JsonArray products_arr) {
-		Set<String> cat_productIds = new HashSet<>(Utils.mapTo(product_id_arr, String.class));
-		List<ProductDTO> products = Utils.mapTo(products_arr, ProductDTO.class);
+		Set<String> cat_productIds = new HashSet<>(product_id_arr.mapTo(String.class));
+		List<ProductDTO> products = products_arr.mapTo(ProductDTO.class);
 		Set<String> productIds = new HashSet<>();
 		for (ProductDTO product : products)
 			productIds.add(product.id());
@@ -95,6 +94,6 @@ public class RecomendationServiceFunctionImpl {
 		
 		List<String> result = random.ints(MAX_RECOMENDATIONS, 0, productIds.size()).mapToObj(i -> new ArrayList<>(productIds).get(i)).collect(Collectors.toList());
 		
-		return Utils.mapFrom(result);
+		return JsonArray.create(result);
 	}
 }
