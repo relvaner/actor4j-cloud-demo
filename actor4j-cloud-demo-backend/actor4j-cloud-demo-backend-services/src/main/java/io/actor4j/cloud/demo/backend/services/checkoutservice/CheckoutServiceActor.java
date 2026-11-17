@@ -32,7 +32,12 @@ public class CheckoutServiceActor extends EmbeddedHandlerPodActor {
 	public void preStart() {
 		setAlias(context.domain());
 		
-		matcher.matchAny((msg) -> handle(msg, () -> new CheckoutEmbeddedActor(context)));
+		matcher.matchAny((msg) -> {
+			// a late timeout of an order that is already done must not start a new order
+			if (msg.tag()==TIMEOUT && !getHandlerRouter().containsKey(msg.interaction()))
+				return;
+			handle(msg, () -> new CheckoutEmbeddedActor(context));
+		});
 	}
 
 	@Override

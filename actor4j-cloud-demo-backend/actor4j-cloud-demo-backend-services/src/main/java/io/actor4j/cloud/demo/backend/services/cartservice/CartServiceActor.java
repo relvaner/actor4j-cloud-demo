@@ -110,6 +110,6 @@ public class CartServiceActor extends PodChildActor {
 				tell(null, PodStatus.METHOD_NOT_ALLOWED, message.source(), message.interaction());
 		}
 		else
-			tell(null, PodStatus.AUTHENTICATION_REQUIRED, message.source(), message.interaction());
+			tell(null, PodStatus.UNAUTHORIZED, message.source(), message.interaction());
 	}
 }

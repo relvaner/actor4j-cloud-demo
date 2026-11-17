@@ -85,7 +85,7 @@
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
-										<Main-Class>io.actor4j.cloud.demo.backend.server.starter.SimpleLauncher</Main-Class>
+										<Main-Class>io.actor4j.cloud.demo.backend.server.starter.Launcher</Main-Class>
 										<Multi-Release>true</Multi-Release>
 									</manifestEntries>
 								</transformer>
@@ -108,7 +108,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.6.0</version>
 				<configuration>
-					<mainClass>io.actor4j.cloud.demo.backend.server.starter.SimpleLauncher</mainClass>
+					<mainClass>io.actor4j.cloud.demo.backend.server.starter.Launcher</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
