@@ -62,7 +62,7 @@ public class PodRequestHandler implements Handler<RoutingContext> {
 							JsonObject obj = (JsonObject)response.result().body();
 							// a pod status 4xx or 5xx becomes the HTTP status, the details stay in pod
 							RESTDefaultResponse answer = PodApiMapper.response(obj.getInteger("status"), obj.getValue("payload"));
-							rc.response().setStatusCode(answer.getStatus());
+							rc.response().setStatusCode(answer.status());
 							rc.response().end(JsonObject.mapFrom(answer).encodePrettily());
 						}
 						else
