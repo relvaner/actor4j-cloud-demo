@@ -25,6 +25,8 @@ import io.actor4j.core.mutable.MutableObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+
 public final class Global extends DefaultGlobal {
 	public static final MutableObject<String> ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR = new MutableObject<String>("");
 	public static SecretKey ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY;
@@ -34,8 +36,11 @@ public final class Global extends DefaultGlobal {
 		DefaultGlobal.config();
 	
 		checkString(ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR, "ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR");
-		if (ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR.getValue().isEmpty())
+		if (ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR.getValue().isEmpty()) {
 			ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY = Jwts.SIG.HS512.key().build();
+			systemLogger().log(WARN, "ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR is not set, a random key is used: "
+				+ "all tokens are invalid after a restart and between several instances (e.g. openssl rand -base64 64)");
+		}
 		else
 			ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY_STR.getValue()));
 

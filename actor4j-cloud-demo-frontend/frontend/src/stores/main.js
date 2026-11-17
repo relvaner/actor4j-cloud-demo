@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
+import { tokenExpired, clearLogin } from '@/utils/auth'
 
 function loadUser() {
 	var user = JSON.parse(localStorage.getItem("user"));
@@ -15,7 +16,9 @@ function loadUser() {
 		}
 		localStorage.setItem("user", JSON.stringify(user));
 	}
-	
+	else if (user.auth && tokenExpired(user.auth))
+		clearLogin(user);
+
 	return user;
 }
 

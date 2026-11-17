@@ -1,0 +1,31 @@
+/* system font stack, nothing is loaded from outside */
+.v-application {
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.page {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+@media (max-width: 600px) {
+	.page {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}
+
+.section-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: rgb(var(--v-theme-primary));
+}
+
+.muted {
+	color: rgba(var(--v-theme-on-surface), 0.6);
+}

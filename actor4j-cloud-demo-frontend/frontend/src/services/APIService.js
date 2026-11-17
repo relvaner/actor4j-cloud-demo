@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { useMainStore } from '@/stores/main';
+import { clearLogin } from '@/utils/auth';
 
 // request methods by name, the server maps them to the pod request methods
 const podRequestMethod = {
@@ -55,6 +57,12 @@ class APIService {
 					resolve(response);
 				})
 				.catch(error => {
+					// the token was rejected (expired, or the server has another key after a restart): logged out
+					if (error.response?.status===401 && auth) {
+						const store = useMainStore();
+						if (store.user.auth===auth)
+							clearLogin(store.user);
+					}
 					let pod = error.response?.data?.pod;
 					if (pod && pod.status>=400)
 						reject({

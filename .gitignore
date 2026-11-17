@@ -107,3 +107,5 @@ nb-configuration.xml
 *.pmd
 
 *.flattened-pom.xml
+# local secrets for docker-compose (see docker/actor4j_cloud_demo/.env.example)
+.env
