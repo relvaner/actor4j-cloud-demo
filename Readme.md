@@ -7,6 +7,17 @@ The microservices demo "Online Boutique" [[1](#1)] (Apache-2.0 license) of Googl
 Fig. 1: Services of the demo application (adapted from [[1](#1)]) and realized as `ActorPods`
 
 
+# Version 2 (2026) #
+
+The demo was revised for Actor4j 2.5, Vert.x 5 and Java 21:
+- New frontend with Vue 3 and Vuetify 4.
+- The checkout is modeled with behaviours (`BehaviourEmbeddedActor`), the recommendation also as a function pod.
+- The REST API uses method names (`GET`, `POST`, `ACTION_1`, ...) and returns the pod status as HTTP status.
+- More robust services: validated requests, clear error answers, no actor crashes on invalid input.
+
+The original version (1.x) is available in the branch `1.2.x`.
+
+
 # References #
 
 [1]<a name="1"/>Google Cloud Platform, “microservices-demo: Sample cloud-first application with 10 microservices showcasing Kubernetes, Istio, and gRPC.” Available: https://github.com/GoogleCloudPlatform/microservices-demo.
