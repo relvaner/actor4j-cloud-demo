@@ -88,13 +88,13 @@ public abstract class PodAuthHandler implements AuthenticationHandler {
 	public void badRequest(HttpServerResponse response, String message) {
 		response.setStatusCode(400);
 		response.end(JsonObject.mapFrom(new RESTDefaultResponse(
-			RESTDefaultResponse.NO_SUCCESS, 400, new Pod(), "", message)).encodePrettily());
+			RESTDefaultResponse.NO_SUCCESS, 400, null, "", message)).encodePrettily());
 	}
 
 	public void methodNotAllowed(HttpServerResponse response) {
 		response.setStatusCode(405);
 		response.end(JsonObject.mapFrom(new RESTDefaultResponse(
-			RESTDefaultResponse.NO_SUCCESS, 405, new Pod(), "", "The method is not allowed for this pod!")).encodePrettily());
+			RESTDefaultResponse.NO_SUCCESS, 405, null, "", "The method is not allowed for this pod!")).encodePrettily());
 	}
 
 	public void notAuthorized(HttpServerResponse response, String authority) {
@@ -108,13 +108,13 @@ public abstract class PodAuthHandler implements AuthenticationHandler {
 			// Unauthenticated and unauthorized!!!
 			response.setStatusCode(401);
 			response.end(JsonObject.mapFrom(new RESTDefaultResponse(
-				RESTDefaultResponse.NO_SUCCESS, 401, new Pod(), "", "The request was rejected!")).encodePrettily());
+				RESTDefaultResponse.NO_SUCCESS, 401, null, "", "The request was rejected!")).encodePrettily());
 		}
 		else {
 			// Authenticated but unauthorized!!!
 			response.setStatusCode(403);
 			response.end(JsonObject.mapFrom(new RESTDefaultResponse(
-				RESTDefaultResponse.NO_SUCCESS, 403, new Pod(), "", "The request was rejected!")).encodePrettily());
+				RESTDefaultResponse.NO_SUCCESS, 403, null, "", "The request was rejected!")).encodePrettily());
 		}
 	}
 

@@ -90,7 +90,7 @@ public final class PodApiMapper {
 		Pod pod = new Pod(status, PodStatus.getStatus(podStatus));
 
 		if (status>=400 && status<600)
-			return new RESTDefaultResponse(RESTDefaultResponse.NO_SUCCESS, status, pod, payload, pod.message!=null ? pod.message : "");
+			return new RESTDefaultResponse(RESTDefaultResponse.NO_SUCCESS, status, pod, payload, pod.message()!=null ? pod.message() : "");
 		else
 			return new RESTDefaultResponse(RESTDefaultResponse.SUCCESS, 200, pod, payload, "");
 	}

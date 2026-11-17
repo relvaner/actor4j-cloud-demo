@@ -73,7 +73,7 @@ public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 				
 				if (PodAuthHandler.isUnknownMethod(remotePodMessageDTO.alias(), remotePodMessageDTO.tag()))
 					ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-						RESTDefaultResponse.NO_SUCCESS, 405, new Pod(), "", "The method is not allowed for this pod!")).encodePrettily());
+						RESTDefaultResponse.NO_SUCCESS, 405, null, "", "The method is not allowed for this pod!")).encodePrettily());
 				else if (PodAuthHandler.isAuthorized(remotePodMessageDTO.alias(), authority, remotePodMessageDTO.tag())) {
 					if (remotePodMessageDTO.reply())
 						vertx.eventBus().<Object>request("actors", bodyAsJson).onComplete(response -> {
@@ -87,18 +87,18 @@ public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 					else {
 						vertx.eventBus().send("actors", bodyAsJson);
 						ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-								RESTDefaultResponse.SUCCESS, 202, new Pod(), "", "The request was accepted and the actor will be called.")).encodePrettily());
+								RESTDefaultResponse.SUCCESS, 202, null, "", "The request was accepted and the actor will be called.")).encodePrettily());
 					}
 				}
 				else {
 					if (authority.equalsIgnoreCase(User.ROLE_UNAUTHENTICATED))
 						// Unauthenticated and unauthorized!!!
 						ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-							RESTDefaultResponse.NO_SUCCESS, 401, new Pod(), "", "The request was rejected!")).encodePrettily());
+							RESTDefaultResponse.NO_SUCCESS, 401, null, "", "The request was rejected!")).encodePrettily());
 					else
 						// Authenticated but unauthorized!!!
 						ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-							RESTDefaultResponse.NO_SUCCESS, 403, new Pod(), "", "The request was rejected!")).encodePrettily());
+							RESTDefaultResponse.NO_SUCCESS, 403, null, "", "The request was rejected!")).encodePrettily());
 				}
 			}
 			else
@@ -118,10 +118,10 @@ public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 	public void ws_fail(ServerWebSocket ws, int status, Exception e) {
 		if (status==404)
 			ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-					RESTDefaultResponse.NO_SUCCESS, 404, new Pod(), "", "The requested actor was not found!")).encodePrettily());
+					RESTDefaultResponse.NO_SUCCESS, 404, null, "", "The requested actor was not found!")).encodePrettily());
 		else
 			ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-					RESTDefaultResponse.ERROR, 400, new Pod(), e!=null ? e.getMessage() : "", "The request was error prone.")).encodePrettily());
+					RESTDefaultResponse.ERROR, 400, null, e!=null ? e.getMessage() : "", "The request was error prone.")).encodePrettily());
 	}
 	
 }

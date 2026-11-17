@@ -15,22 +15,6 @@
  */
 package io.actor4j.cloud.demo.single.instance.utils;
 
-public class Pod {
-	public int status;
-	public String message;
-		
-	public Pod() {
-		super();
-	}
-
-	public Pod(int status, String message) {
-		super();
-		this.status = status;
-		this.message = message;
-	}
-
-	@Override
-	public String toString() {
-		return "Pod [status=" + status + ", message=" + message + "]";
-	}
+// pod part of the REST response: pod status (without offset) and its text, null if no pod answered (e.g. rejected by the gateway)
+public record Pod(int status, String message) {
 }

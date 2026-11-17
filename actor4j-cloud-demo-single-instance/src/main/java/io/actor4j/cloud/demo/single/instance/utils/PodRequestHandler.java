@@ -72,7 +72,7 @@ public class PodRequestHandler implements Handler<RoutingContext> {
 					vertx.eventBus().send("actors", bodyAsJson);
 					rc.response().setStatusCode(202);
 					rc.response().end(JsonObject.mapFrom(new RESTDefaultResponse(
-							RESTDefaultResponse.SUCCESS, 202, new Pod(), "", "The request was accepted and the actor will be called.")).encodePrettily());
+							RESTDefaultResponse.SUCCESS, 202, null, "", "The request was accepted and the actor will be called.")).encodePrettily());
 				}
 			}
 			else
@@ -87,12 +87,12 @@ public class PodRequestHandler implements Handler<RoutingContext> {
 			if (rc.statusCode()==404) {
 				rc.response().setStatusCode(404);
 				rc.response().end(JsonObject.mapFrom(new RESTDefaultResponse(
-						RESTDefaultResponse.NO_SUCCESS, 404, new Pod(), "", "The requested actor was not found!")).encodePrettily());
+						RESTDefaultResponse.NO_SUCCESS, 404, null, "", "The requested actor was not found!")).encodePrettily());
 			}
 			else {
 				rc.response().setStatusCode(400);
 				rc.response().end(JsonObject.mapFrom(new RESTDefaultResponse(
-						RESTDefaultResponse.ERROR, 400, new Pod(), rc.failure()!=null ? rc.failure().getMessage() : "", "The request was error prone.")).encodePrettily());
+						RESTDefaultResponse.ERROR, 400, null, rc.failure()!=null ? rc.failure().getMessage() : "", "The request was error prone.")).encodePrettily());
 			}
 		};
 	}
