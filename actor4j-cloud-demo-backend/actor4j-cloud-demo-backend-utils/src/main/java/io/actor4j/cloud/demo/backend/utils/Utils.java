@@ -21,8 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonArray;
+import io.actor4j.cloud.demo.shared.utils.Json;
+import io.actor4j.core.json.JsonObject;
 
 public class Utils {
 	private static Set<Class<?>> PRIMITIVE_WRAPPERS;
@@ -50,12 +51,12 @@ public class Utils {
 	}
 
 	public static <T> JsonArray mapFrom(List<T> list) {
-		JsonArray result = new JsonArray();
+		JsonArray result = JsonArray.create();
 		for (T obj : list) {
 			if (isWrapperType(obj.getClass()))
 				result.add(obj);
 			else
-				result.add(JsonObject.mapFrom(obj));
+				result.add(Json.from(obj));
 		}
 		return result;
 	}
@@ -70,7 +71,7 @@ public class Utils {
 			if (isWrapperType(obj.getClass()))
 				result.add((T)obj);
 			else
-				result.add(((JsonObject)obj).mapTo(valueType));
+				result.add(Json.mapTo((JsonObject)obj, valueType));
 		}
 		
 		return result;
@@ -79,7 +80,7 @@ public class Utils {
 	public static JsonObject parse(String json) {
 		JsonObject result = null;
 		try {
-			result = new JsonObject(json);
+			result = JsonObject.create(json);
 		}
 		catch (Exception e) {
 			// empty

@@ -1,8 +1,8 @@
 <template>
 	<div id="product">
-		<v-card hover outlined @click="$router.push({name: 'Product', params: { id: product.id }})">
+		<v-card hover variant="outlined" @click="$router.push({name: 'Product', params: { id: product.id }})">
 			<v-card-text>
-				<v-img height="400" :src="product.picture"/>
+				<v-img cover height="400" :src="product.picture"/>
 				<br>
 				<h3>{{ product.name }}</h3>
 				<p>{{ currency }} {{ price }}</p>
@@ -24,7 +24,7 @@ export default {
 		}
 	},
 	created() {
-		this.price = this.product.price_usd.units.toString() + '.' + this.product.price_usd.nanos.toString().substr(0, 2);
+		this.price = this.product.price_usd.units.toString() + '.' + this.product.price_usd.nanos.toString().substring(0, 2);
 	},
 	methods: {
   }

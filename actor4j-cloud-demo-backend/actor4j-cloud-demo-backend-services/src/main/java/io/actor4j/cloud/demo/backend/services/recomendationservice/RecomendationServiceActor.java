@@ -32,7 +32,7 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.utils.ActorMessageHandler;
-import io.vertx.core.json.JsonArray;
+import io.actor4j.core.json.JsonArray;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -87,6 +87,6 @@ public class RecomendationServiceActor extends PodChildActor {
 		if (limit>0)
 			return Utils.mapFrom(random.ints(0, productIdsList.size()).mapToObj(i -> productIdsList.get(i)).distinct().limit(limit).collect(Collectors.toList()));
 		else
-			return new JsonArray();
+			return JsonArray.create();
 	}
 }

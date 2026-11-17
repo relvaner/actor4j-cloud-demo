@@ -3,7 +3,7 @@
 		<v-row>
 			<v-col></v-col>
 			<v-col xs="12" md="6" lg="4">
-				<v-card outlined v-if="checkoutLoaded">
+				<v-card variant="outlined" v-if="checkoutLoaded">
 					<v-card-text>
 						<b><h1>Your order is complete!</h1></b>
 						<br>
@@ -33,6 +33,8 @@
 
 <script>
 import { CheckoutService } from '@/services/CheckoutService';
+import { mapStores } from 'pinia';
+import { useMainStore } from '@/stores/main';
 
 export default {
 	name: 'CheckoutView',
@@ -45,18 +47,21 @@ export default {
 			checkoutLoaded: false
 		}
 	},
+	computed: {
+		...mapStores(useMainStore)
+	},
 	created() {
 		this.checkout();
 	},
 	methods: {
 		moneyAsString(money) {
-				return money.units.toString() + '.' + money.nanos.toString().substr(0, 2);
+				return money.units.toString() + '.' + money.nanos.toString().substring(0, 2);
 			},
 		checkout() {
 			this.checkoutLoaded = false;
 		
-			if (this.$store.state.order !== null)
-				CheckoutService.post(this.$store.state.order, this.$store.state.user.auth)
+			if (this.mainStore.order !== null)
+				CheckoutService.post(this.mainStore.order, this.mainStore.user.auth)
 				.then(response => {
 					this.orderResult = response.data.data;
 					this.checkoutLoaded = true;

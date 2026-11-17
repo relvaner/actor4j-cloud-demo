@@ -29,8 +29,9 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonArray;
+import io.actor4j.cloud.demo.shared.utils.Json;
+import io.actor4j.core.json.JsonObject;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -70,9 +71,9 @@ public class ProductCatalogServiceActor extends PodChildActor {
 				
 				ProductDTO product = getProduct(message.valueAsString());
 				if (product!=null)
-					result = JsonObject.mapFrom(product);
+					result = Json.from(product);
 				else
-					result = new JsonObject();
+					result = JsonObject.create();
 				
 				tell(result, PodStatus.OK, message.source(), message.interaction());
 			}
@@ -88,14 +89,14 @@ public class ProductCatalogServiceActor extends PodChildActor {
 					if (list!=null)
 						result = Utils.mapFrom(list);
 					else
-						result = new JsonArray();
+						result = JsonArray.create();
 				}
 				else if (message.tag()==QRY_SEARCH_BY_CATEGORY && message.value()!=null && message.value() instanceof String) {
 					List<ProductDTO> list = productCatalogMap.get(message.valueAsString());
 					if (list!=null)
 						result = Utils.mapFrom(list);
 					else
-						result = new JsonArray();
+						result = JsonArray.create();
 				}
 				else
 					tag = PodStatus.METHOD_NOT_ALLOWED;

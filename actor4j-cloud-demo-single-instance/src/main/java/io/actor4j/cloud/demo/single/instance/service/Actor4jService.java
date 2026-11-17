@@ -36,13 +36,16 @@ import io.actor4j.core.runtime.config.InternalServerCallback;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.ActorMessageUtils;
 import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodDeployment;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.api.Database;
+import io.actor4j.cloud.demo.single.instance.utils.VertxJson;
+import io.actor4j.core.json.JsonArray;
+import io.actor4j.core.json.JsonObject;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.eventbus.Message;
 
 public class Actor4jService {
 	protected static ActorService service;
@@ -63,12 +66,19 @@ public class Actor4jService {
 	
 	public static void start(Vertx vertx, Database<?> database) {
 		if (service==null) {
-			ActorMessageUtils.SUPPORTED_TYPES.add(JsonObject.class);
-			ActorMessageUtils.SUPPORTED_TYPES.add(JsonArray.class);
+			// JSON of actor4j as message value (the classes of the implementation on the classpath)
+			ActorMessageUtils.SUPPORTED_TYPES.add(JsonObject.create().getClass());
+			ActorMessageUtils.SUPPORTED_TYPES.add(JsonArray.create().getClass());
 			ActorMessageUtils.SUPPORTED_TYPES.add(SecretKeySpec.class);
 			
-			InternalServerCallback internalServerCallback = (replyAddress, result, tag) -> 
-				vertx.eventBus().publish((String)replyAddress, new JsonObject().put("payload", result).put("status", tag));
+			// replyTo is the Vert.x message of the request (Actor4jVerticle), the answer goes back with reply
+			InternalServerCallback internalServerCallback = (replyTo, result, tag) -> {
+				io.vertx.core.json.JsonObject answer = new io.vertx.core.json.JsonObject().put("payload", VertxJson.toVertx(result)).put("status", tag);
+				if (replyTo instanceof Message<?> message)
+					message.reply(answer);
+				else if (replyTo instanceof String replyAddress)
+					vertx.eventBus().send(replyAddress, answer);
+			};
 			ActorRuntimeConfig runtimeConfig = ActorRuntimeConfig.builder()
 				.internalServerCallback(internalServerCallback)
 				.build();
@@ -99,12 +109,18 @@ public class Actor4jService {
 		if (service!=null) {
 			((InternalActorSystem)service).addSystemActor(() -> new HealthActor());
 		
-			service.deployPods(
-				() -> new PingActorPod(), 
-				new PodConfiguration("ping", PingActorPod.class.getName(), 1, 1));
+			service.deployPods(() -> new PingActorPod(), new PodDeployment());
 		}
 	}
 	
+	// the domain comes from the pod itself
+	public static void deployPods(PodFactory factory, PodDeployment podDeployment, PodPolicy podPolicy) {
+		if (service!=null) {
+			podPolicies.put(factory.create().domain(), podPolicy);
+			service.deployPods(factory, podDeployment);
+		}
+	}
+
 	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodPolicy podPolicy) {
 		if (service!=null) {
 			podPolicies.put(podConfiguration.domain(), podPolicy);

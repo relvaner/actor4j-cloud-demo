@@ -32,7 +32,8 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonObject;
+import io.actor4j.cloud.demo.shared.utils.Json;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -72,15 +73,15 @@ public class CurrencyServiceActor extends PodChildActor {
 				result = Utils.mapFrom(getCurrencies());
 			else if (message.tag()==CMD_CONVERT_BY_CURRENCY && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
-					ConvertDTO convert = ((JsonObject)message.value()).mapTo(ConvertDTO.class);
+					ConvertDTO convert = Json.mapTo((JsonObject)message.value(), ConvertDTO.class);
 					if (convert!=null) {
 						String currencyFrom = currencyDataMap.get(convert.money().currency_code());
 						String currencyTo   = currencyDataMap.get(convert.currency_code());
 						if (currencyFrom!=null && currencyTo!=null  && !currencyFrom.equals(currencyTo))
-							result = JsonObject.mapFrom(
+							result = Json.from(
 								MoneyDTO.convert(convert.money(), convert.currency_code(), Double.valueOf(currencyFrom), Double.valueOf(currencyTo)));
 						else
-							result = JsonObject.mapFrom(convert.money());
+							result = Json.from(convert.money());
 					}
 					else
 						tag = PodStatus.INTERNAL_SERVER_ERROR;

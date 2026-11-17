@@ -15,7 +15,7 @@
  */
 package io.actor4j.cloud.demo.shared.utils;
 
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonObject;
 
 public record User(JsonObject principal) {
 	public static final String ROLE_PUBLIC  		= "ROLE_PUBLIC";

@@ -22,7 +22,9 @@ import java.util.UUID;
 
 import io.actor4j.cloud.demo.backend.services.shared.CartDTO;
 import io.actor4j.cloud.demo.backend.services.shared.CartItemDTO;
+import io.actor4j.cloud.demo.shared.utils.Json;
 import io.actor4j.cloud.demo.shared.utils.User;
+import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -30,15 +32,16 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.utils.ActorCacheHandler;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.data.access.AckMode;
+import io.actor4j.data.access.pods.utils.PodVolatileActorCacheManager;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
+// the carts are kept in a volatile cache of actor4j-data that all replicas of the pod share (primary and secondaries)
 public class CartServiceActor extends PodChildActor {
-//	protected PodVolatileActorCacheManager<String, CartEntity> manager;
-	protected Map<String, CartEntity> manager;
+	protected PodVolatileActorCacheManager<String, CartEntity> manager;
 	protected ActorCacheHandler<String, CartEntity> handler;
-	
+
 	public CartServiceActor(UUID groupId, PodContext context) {
 		super(groupId, context);
 	}
@@ -46,71 +49,61 @@ public class CartServiceActor extends PodChildActor {
 	@Override
 	public void preStart() {
 		setAlias(context.domain());
-		
-//		manager = new PodVolatileActorCacheManager<>(this, "volatile-cache-"+context.domain(), groupId);
-//		manager.createReplica(500, context);
-		
-//		handler = new ActorCacheHandler<>((msg) -> manager.get(msg));
-		
-		manager = new HashMap<>();
+
+		manager = new PodVolatileActorCacheManager<>(this, "volatile-cache-"+context.domain(), groupId);
+		manager.createReplica(500, AckMode.NONE, context); // no acknowledgements of set and del to this actor
+
+		handler = new ActorCacheHandler<>((msg) -> manager.get(msg));
 	}
 
 	@Override
 	public void receive(ActorMessage<?> message) {
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
-		
-//		if (!handler.match(message))
+
+		// answers of the cache go to the handler defined for the interaction, other messages that are no requests are ignored
+		if (!handler.match(message) && message instanceof PodActorMessage)
 			handleRequest(message);
 	}
-	
+
 	public void handleRequest(ActorMessage<?> message) {
 		@SuppressWarnings("unchecked")
 		User user = ((PodActorMessage<JsonObject, User, Void>)message).user();
 		if (user!=null && user.principal()!=null) {
 			String user_id = user.principal().getString("sub");
-			
+
 			if (message.tag()==PodRequestMethod.GET) {
-//				handler.define(message.interaction(), (pair) -> {
-//					JsonObject result = new JsonObject();
-//					if (pair.b()!=null)
-//						result = JsonObject.mapFrom(new CartDTO(pair.b().user_id(), new LinkedList<>(pair.b().items().values())));
-//					tell(result, PodStatus.OK, message.source(), message.interaction());
-//				});
-//				manager.get(user_id, message.interaction());	
-				CartEntity cart = manager.get(user_id);
-				JsonObject result = new JsonObject();
-				if (cart!=null)
-					result = JsonObject.mapFrom(new CartDTO(cart.user_id(), new LinkedList<>(cart.items().values())));
-				tell(result, PodStatus.OK, message.source(), message.interaction());
+				handler.define(message.interaction(), (pair) -> {
+					JsonObject result = JsonObject.create();
+					if (pair.b()!=null)
+						result = Json.from(new CartDTO(pair.b().user_id(), new LinkedList<>(pair.b().items().values())));
+					tell(result, PodStatus.OK, message.source(), message.interaction());
+				});
+				manager.get(user_id, message.interaction());
 			}
 			else if (message.tag()==PodRequestMethod.POST && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
-					CartItemDTO cartItem = ((JsonObject)message.value()).mapTo(CartItemDTO.class);
-//					handler.define(message.interaction(), (pair) -> {
-//						CartEntity cart = pair.b();
-						CartEntity cart = manager.get(user_id);
-						if (cart==null)
-							cart = new CartEntity(user_id, new HashMap<>());
-						CartItemDTO found = cart.items().get(cartItem.product_id());
+					CartItemDTO cartItem = Json.mapTo((JsonObject)message.value(), CartItemDTO.class);
+					handler.define(message.interaction(), (pair) -> {
+						// a new, unmodifiable cart, the cached one is shared with the other replicas
+						Map<String, CartItemDTO> items = pair.b()!=null ? new HashMap<>(pair.b().items()) : new HashMap<>();
+						CartItemDTO found = items.get(cartItem.product_id());
 						if (found!=null)
-							cart.items().put(cartItem.product_id(), 
-								new CartItemDTO(cartItem.product_id(), cartItem.quantity()+found.quantity()));
+							items.put(cartItem.product_id(), new CartItemDTO(cartItem.product_id(), cartItem.quantity()+found.quantity()));
 						else
-							cart.items().put(cartItem.product_id(), cartItem);
-//						manager.set(user_id, cart);
-						manager.put(user_id, cart);
-//					});
-//					manager.get(user_id, message.interaction());
-					tell(null, PodStatus.ACCEPTED, message.source(), message.interaction());
+							items.put(cartItem.product_id(), cartItem);
+						manager.set(user_id, new CartEntity(user_id, Map.copyOf(items)));
+
+						tell(null, PodStatus.ACCEPTED, message.source(), message.interaction());
+					});
+					manager.get(user_id, message.interaction());
 				}
 				catch (IllegalArgumentException e) {
 					e.printStackTrace();
-					tell(e.getCause().getMessage(), PodStatus.BAD_REQUEST, message.source(), message.interaction());
+					tell(e.getMessage(), PodStatus.BAD_REQUEST, message.source(), message.interaction());
 				}
 			}
 			else if (message.tag()==PodRequestMethod.DELETE) {
-//				manager.del(user_id);
-				manager.remove(user_id);
+				manager.del(user_id);
 				tell(null, PodStatus.ACCEPTED, message.source(), message.interaction());
 			}
 			else

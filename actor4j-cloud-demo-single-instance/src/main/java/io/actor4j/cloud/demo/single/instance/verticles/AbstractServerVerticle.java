@@ -38,7 +38,7 @@ public abstract class AbstractServerVerticle extends AbstractVerticle {
 	}
 	
 	public void serverConfig(Router router) {
-		router.route().handler(CorsHandler.create("*")
+		router.route().handler(CorsHandler.create().addOrigin("*")
 				.allowedMethod(HttpMethod.GET)
 				.allowedMethod(HttpMethod.POST)
 				.allowedMethod(HttpMethod.OPTIONS)

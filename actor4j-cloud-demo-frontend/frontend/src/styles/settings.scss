@@ -1,0 +1,11 @@
+// Vuetify 2 breakpoints (Vuetify 4 defaults are smaller)
+@use 'vuetify/settings' with (
+	$grid-breakpoints: (
+		'xs': 0,
+		'sm': 600px,
+		'md': 960px,
+		'lg': 1264px,
+		'xl': 1904px,
+		'xxl': 2560px,
+	),
+);

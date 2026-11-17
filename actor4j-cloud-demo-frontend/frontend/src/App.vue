@@ -1,9 +1,9 @@
 <template>
-	<div id="app" data-app>
-		<v-app-bar 
-			dark
-			prominent
-			src="static/img/HeroBannerImage2.png">
+	<v-app id="app">
+		<v-toolbar 
+			theme="dark"
+			density="prominent"
+			image="static/img/HeroBannerImage2.png">
 			
 			<v-container fluid>
 				<v-row>
@@ -11,11 +11,11 @@
 						<v-toolbar-title >Actor4j Cloud  - Demo (Online Boutique)</v-toolbar-title>
 					</v-col>
 					<v-col cols="12" md="6" align="right">
-						<v-select style="width:75px;display:inline-flex" v-model="defaultSelected" :items="items" ></v-select>
-						<v-btn @click="$route.name!=='Home' && $router.push({name: 'Home'})" text>Home</v-btn>
-						<v-btn @click="$route.name!=='Cart' && $router.push({name: 'Cart'})" text>Cart</v-btn>
-						<v-btn v-if="loggedIn" @click="logout" text>Logout</v-btn>
-						<v-btn v-if="!loggedIn" @click="showLogin" text>Login</v-btn>
+						<v-select style="width:75px;display:inline-flex" v-model="defaultSelected" :items="items"></v-select>
+						<v-btn @click="$route.name!=='Home' && $router.push({name: 'Home'})" variant="text">Home</v-btn>
+						<v-btn @click="$route.name!=='Cart' && $router.push({name: 'Cart'})" variant="text">Cart</v-btn>
+						<v-btn v-if="loggedIn" @click="logout" variant="text">Logout</v-btn>
+						<v-btn v-if="!loggedIn" @click="showLogin" variant="text">Login</v-btn>
 					</v-col>
 				</v-row>
 				<v-row>
@@ -26,7 +26,7 @@
 					</v-col>
 				</v-row>
 			</v-container>
-		</v-app-bar>
+		</v-toolbar>
 
 		<br>
 		<v-container fluid>
@@ -35,17 +35,19 @@
 		</v-container>
 		<br>
 					
-		<v-footer padless id="footer">
-			<v-col class="text-center" cols="12">
+		<v-footer class="pa-0" id="footer">
+			<v-col class="text-center w-100 pa-3" cols="12">
 				{{ new Date().getFullYear() }} —
 				<strong>actor4j.io</strong>
 			</v-col>
 		</v-footer>
-	</div>
+	</v-app>
 </template>
 
 <script>
+	import { mapStores } from "pinia";
 	import LoginDialog from "@/dialogs/LoginDialog.vue";
+	import { useMainStore } from "@/stores/main";
 	export default {
 		components: {
 			LoginDialog: LoginDialog
@@ -60,11 +62,14 @@
 				defaultSelected: 'USD'
 			}
 		},
+		computed: {
+			...mapStores(useMainStore)
+		},
 		created() {
-			this.loggedIn = this.$store.state.user.auth!=null;
+			this.loggedIn = this.mainStore.user.auth!=null;
 			
-			if (this.$store.state.user.prefered_username!=null)
-				this.welcomeUser = ('Welcome ' + this.$store.state.user.prefered_username).toUpperCase();
+			if (this.mainStore.user.prefered_username!=null)
+				this.welcomeUser = ('Welcome ' + this.mainStore.user.prefered_username).toUpperCase();
 		},
 		methods: {
 			showLogin() {
@@ -77,11 +82,11 @@
 				}); 
 			},
 			logout() {
-				this.$store.state.user.auth=null;
-				this.$store.state.user.prefered_username=null
-				this.$store.state.user.cart_unauthenticated.items = [];
-				this.$store.state.order=null;
-				localStorage.setItem("user", JSON.stringify(this.$store.state.user));
+				this.mainStore.user.auth=null;
+				this.mainStore.user.prefered_username=null
+				this.mainStore.user.cart_unauthenticated.items = [];
+				this.mainStore.order=null;
+				localStorage.setItem("user", JSON.stringify(this.mainStore.user));
 				
 				this.$router.go(0);
 			}

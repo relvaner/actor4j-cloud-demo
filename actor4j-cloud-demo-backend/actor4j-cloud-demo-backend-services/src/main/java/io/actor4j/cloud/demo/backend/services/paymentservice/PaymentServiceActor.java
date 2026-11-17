@@ -28,7 +28,8 @@ import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.utils.Pair;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonObject;
+import io.actor4j.cloud.demo.shared.utils.Json;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -51,7 +52,7 @@ public class PaymentServiceActor extends PodChildActor {
 			int tag = PodStatus.OK;
 			
 			try {
-				ChargeDTO charge = ((JsonObject)message.value()).mapTo(ChargeDTO.class);
+				ChargeDTO charge = Json.mapTo((JsonObject)message.value(), ChargeDTO.class);
 				if (charge!=null) {
 					Pair<Object, Integer> pair = charge(charge);
 					result = pair.a();

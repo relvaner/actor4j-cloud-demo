@@ -1,11 +1,8 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import ProductView from '../views/ProductView.vue'
 import CartView from '../views/CartView.vue'
 import CheckoutView from '../views/CheckoutView.vue'
-
-Vue.use(VueRouter)
 
 const routes = [
   {
@@ -30,10 +27,9 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
-  base: process.env.NODE_ENV === 'production'
-    ? '/demo/'
-    : '/',
+// vue-router 3 defaulted to hash mode, kept for the Vert.x StaticHandler (no history fallback)
+const router = createRouter({
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes
 })
 

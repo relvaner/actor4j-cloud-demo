@@ -1,43 +1,38 @@
 import axios from 'axios';
 
-const POD_STATUS_OFFSET = 10000;
-const POD_REQUEST_METHOD_OFFSET = 11000;
-
+// request methods by name, the server maps them to the pod request methods
 const podRequestMethod = {
-	GET         : POD_REQUEST_METHOD_OFFSET,
-	GET_ALL     : POD_REQUEST_METHOD_OFFSET+1,
-	POST        : POD_REQUEST_METHOD_OFFSET+2,
-	PUT         : POD_REQUEST_METHOD_OFFSET+3,
-	DELETE      : POD_REQUEST_METHOD_OFFSET+4,
-
-	SUBSCRIBE   : POD_REQUEST_METHOD_OFFSET+6,
-	UNSUBSCRIBE : POD_REQUEST_METHOD_OFFSET+7,
-	PUBLISH     : POD_REQUEST_METHOD_OFFSET+8,
-
-	ACTION_1    : POD_REQUEST_METHOD_OFFSET+11,
-	ACTION_2    : POD_REQUEST_METHOD_OFFSET+12,
-	ACTION_3    : POD_REQUEST_METHOD_OFFSET+13,
-	ACTION_4    : POD_REQUEST_METHOD_OFFSET+14,
-	ACTION_5    : POD_REQUEST_METHOD_OFFSET+15,
-	ACTION_6    : POD_REQUEST_METHOD_OFFSET+16,
-	ACTION_7    : POD_REQUEST_METHOD_OFFSET+17,
-	ACTION_8    : POD_REQUEST_METHOD_OFFSET+18,
-	ACTION_9    : POD_REQUEST_METHOD_OFFSET+19,
-	ACTION_10   : POD_REQUEST_METHOD_OFFSET+20,
-
-	ACTION_11   : POD_REQUEST_METHOD_OFFSET+21,
-	ACTION_12   : POD_REQUEST_METHOD_OFFSET+22,
-	ACTION_13   : POD_REQUEST_METHOD_OFFSET+23,
-	ACTION_14   : POD_REQUEST_METHOD_OFFSET+24,
-	ACTION_15   : POD_REQUEST_METHOD_OFFSET+25,
-	ACTION_16   : POD_REQUEST_METHOD_OFFSET+26,
-	ACTION_17   : POD_REQUEST_METHOD_OFFSET+27,
-	ACTION_18   : POD_REQUEST_METHOD_OFFSET+28,
-	ACTION_19   : POD_REQUEST_METHOD_OFFSET+29,
-	ACTION_20   : POD_REQUEST_METHOD_OFFSET+30,
+	GET         : 'GET',
+	GET_ALL     : 'GET_ALL',
+	POST        : 'POST',
+	PUT         : 'PUT',
+	DELETE      : 'DELETE',
+	SUBSCRIBE   : 'SUBSCRIBE',
+	UNSUBSCRIBE : 'UNSUBSCRIBE',
+	PUBLISH     : 'PUBLISH',
+	ACTION_1    : 'ACTION_1',
+	ACTION_2    : 'ACTION_2',
+	ACTION_3    : 'ACTION_3',
+	ACTION_4    : 'ACTION_4',
+	ACTION_5    : 'ACTION_5',
+	ACTION_6    : 'ACTION_6',
+	ACTION_7    : 'ACTION_7',
+	ACTION_8    : 'ACTION_8',
+	ACTION_9    : 'ACTION_9',
+	ACTION_10   : 'ACTION_10',
+	ACTION_11   : 'ACTION_11',
+	ACTION_12   : 'ACTION_12',
+	ACTION_13   : 'ACTION_13',
+	ACTION_14   : 'ACTION_14',
+	ACTION_15   : 'ACTION_15',
+	ACTION_16   : 'ACTION_16',
+	ACTION_17   : 'ACTION_17',
+	ACTION_18   : 'ACTION_18',
+	ACTION_19   : 'ACTION_19',
+	ACTION_20   : 'ACTION_20',
 }
 
-const contextPath = process.env.NODE_ENV === 'production'
+const contextPath = import.meta.env.PROD
     ? '/demo/api/'
     : '/backend/';
 const apiUrl = contextPath+'actors';
@@ -54,23 +49,21 @@ class APIService {
 			if (auth!==undefined && auth!==null)
 				config.headers['X-Pod-Authorization'] = 'Bearer ' + auth;
 			
+			// the server answers a pod status 4xx or 5xx with the same HTTP status (axios rejects it), pod.status without offset
 			axios.post(apiUrl, actorMessage, config)
 				.then(response => {
-					let status = response.data.pod.status - POD_STATUS_OFFSET;
-					if (status>=400) {
-						// 4XXX, 5XXX
-						let error = {
-							status: status,
-							message: response.data.pod.message + '[POD]',
-							response: response,
-						};
-						reject(error);
-					}
-					else
-						resolve(response);
+					resolve(response);
 				})
 				.catch(error => {
-					reject(error);
+					let pod = error.response?.data?.pod;
+					if (pod && pod.status>=400)
+						reject({
+							status: pod.status,
+							message: pod.message + '[POD]',
+							response: error.response,
+						});
+					else
+						reject(error);
 				});
 		});
 	}

@@ -42,6 +42,18 @@ public class PodPolicy {
 		return new PodPolicy(Map.of());
 	}
 	
+	// true, if any role may call the method
+	public static boolean knownMethod(PodPolicy podPolicy, int podRequestMethod) {
+		if (podPolicy==null)
+			return false;
+
+		for (Set<Integer> podRequestMethods : podPolicy.authorizedMethods.values())
+			if (podRequestMethods.contains(podRequestMethod) || (podRequestMethods.size()==1 && podRequestMethods.contains(Integer.MAX_VALUE)))
+				return true;
+
+		return false;
+	}
+
 	public static boolean allowedMethod(PodPolicy podPolicy, String userAuthority, int podRequestMethod) {
 		boolean result = false;
 		

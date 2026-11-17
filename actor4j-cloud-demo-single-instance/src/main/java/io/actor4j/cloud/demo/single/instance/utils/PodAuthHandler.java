@@ -43,16 +43,13 @@ public abstract class PodAuthHandler implements AuthenticationHandler {
 		
 		String domain = rc.request().headers().get(PodHttpHeaders.X_POD_DOMAIN);
 		String podRequestMethodStr = rc.request().headers().get(PodHttpHeaders.X_POD_REQUEST_METHOD);
-		int podRequestMethod = 0;
-		if (podRequestMethodStr!=null && StringUtils.isNotBlank(podRequestMethodStr))
-			try {
-				podRequestMethod = Integer.valueOf(podRequestMethodStr);
-			}
-			catch (NumberFormatException e) {
-				// empty
-			}
+		// name (GET, ACTION_1, ...) or own tag as number, 0 if invalid
+		Integer method = PodApiMapper.method(podRequestMethodStr);
+		int podRequestMethod = method!=null ? method : 0;
 		
-		if (isAuthorized(domain, authority, podRequestMethod)) {
+		if (isUnknownMethod(domain, podRequestMethod))
+			methodNotAllowed(rc.response());
+		else if (isAuthorized(domain, authority, podRequestMethod)) {
 			rc.put(PodHttpHeaders.X_POD_DOMAIN, domain);
 			rc.put(PodHttpHeaders.X_POD_REQUEST_METHOD, podRequestMethod);
 			rc.next();	
@@ -73,6 +70,23 @@ public abstract class PodAuthHandler implements AuthenticationHandler {
 			return false;
 	}
 	
+	// the pod exists, but no role may call the method
+	public static boolean isUnknownMethod(String domain, int podRequestMethod) {
+		if (domain!=null && StringUtils.isNotBlank(domain)) {
+			PodPolicy podPolicy = Actor4jService.getPodPolicies().get(domain);
+
+			return podPolicy!=null && !podPolicy.authorizedMethods.isEmpty() && !PodPolicy.knownMethod(podPolicy, podRequestMethod);
+		}
+		else
+			return false;
+	}
+
+	public void methodNotAllowed(HttpServerResponse response) {
+		response.setStatusCode(405);
+		response.end(JsonObject.mapFrom(new RESTDefaultResponse(
+			RESTDefaultResponse.NO_SUCCESS, 405, new Pod(), "", "The method is not allowed for this pod!")).encodePrettily());
+	}
+
 	public void notAuthorized(HttpServerResponse response, String authority) {
 		/* 
 		 * @See: https://stackoverflow.com/questions/3297048/403-forbidden-vs-401-unauthorized-http-responses

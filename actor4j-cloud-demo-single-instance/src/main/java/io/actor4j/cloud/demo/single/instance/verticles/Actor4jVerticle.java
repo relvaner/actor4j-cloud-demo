@@ -18,6 +18,7 @@ package io.actor4j.cloud.demo.single.instance.verticles;
 
 import io.actor4j.cloud.demo.shared.utils.User;
 import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
+import io.actor4j.cloud.demo.single.instance.utils.VertxJson;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
@@ -41,12 +42,12 @@ public class Actor4jVerticle extends AbstractVerticle {
 			User user = null;
 			if (body.containsKey("principal")) {
 				JsonObject principal = body.getJsonObject("principal");
-				user = new User(principal);
+				user = new User(VertxJson.toActor4j(principal));
 				body.remove("principal");
 			}
 			RemotePodMessageDTO remotePodMessageDTO = evaluateMessage(body);
 			if (!Actor4jService.getService().sendViaAliasAsServer(ActorMessage.create(
-					new RemotePodMessage(remotePodMessageDTO, message.replyAddress(), user), 0, Actor4jService.getService().SYSTEM_ID(), null), remotePodMessageDTO.alias()))
+					new RemotePodMessage(remotePodMessageDTO, message/*replyTo*/, user), 0, Actor4jService.getService().SYSTEM_ID(), null), remotePodMessageDTO.alias()))
 				message.fail(404, "The requested actor was not found!");
 		});
 	}
@@ -54,10 +55,10 @@ public class Actor4jVerticle extends AbstractVerticle {
 	public RemotePodMessageDTO evaluateMessage(JsonObject body) {
 		Object payload = null;
 		if (body.containsKey("payload"))
-			payload = body.getValue("payload");
+			payload = VertxJson.toActor4j(body.getValue("payload"));
 		Object params = null;
 		if (body.containsKey("params"))
-			params = body.getValue("params");
+			params = VertxJson.toActor4j(body.getValue("params"));
 		
 		RemotePodMessageDTO buf = body.mapTo(RemotePodMessageDTO.class);
 		return new RemotePodMessageDTO(payload, buf.tag(), buf.alias(), params, buf.reply());

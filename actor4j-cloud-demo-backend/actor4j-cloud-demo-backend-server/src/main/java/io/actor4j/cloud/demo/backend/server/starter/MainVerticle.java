@@ -37,11 +37,11 @@ import io.actor4j.cloud.demo.single.instance.service.Actor4jService;
 import io.actor4j.cloud.demo.single.instance.utils.PodPolicy;
 import io.actor4j.cloud.demo.single.instance.verticles.Actor4jVerticle;
 import io.actor4j.core.immutable.ImmutableObject;
-import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodDeployment;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonObject;
 
 public class MainVerticle extends AbstractVerticle {
 	public static final int MIN_REPLICA = 3;
@@ -66,16 +66,16 @@ public class MainVerticle extends AbstractVerticle {
 		
 		Actor4jService.deployPods(
 			() -> new AuthorizationServiceActorPod(), 
-			new PodConfiguration("AuthorizationService", AuthorizationServiceActorPod.class.getName(), 1, 1),
+			new PodDeployment(),
 			PodPolicy.allow(Map.of(
 				User.ROLE_PUBLIC, Set.of(PodRequestMethod.POST)
 		)));
-		User admin = new User(new JsonObject().put("authority", User.ROLE_SYSTEM));
+		User admin = new User(JsonObject.create().put("authority", User.ROLE_SYSTEM));
 		Actor4jService.send(new ImmutableObject<Key>(Global.ACTOR4J_CLOUD_AUTHORIZATION_SECRET_KEY), PodRequestMethod.ACTION_1, "AuthorizationService", admin, null);
 		
 		Actor4jService.deployPods(
 			() -> new CartServiceActorPod(), 
-			new PodConfiguration("CartService", CartServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(
 				User.ROLE_USER, Set.of(
 					PodRequestMethod.GET, 
@@ -84,7 +84,7 @@ public class MainVerticle extends AbstractVerticle {
 		)));
 		Actor4jService.deployPods(
 			() -> new ProductCatalogServiceActorPod(), 
-			new PodConfiguration("ProductCatalogService", ProductCatalogServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(
 				User.ROLE_PUBLIC, Set.of(
 					PodRequestMethod.GET, 
@@ -94,7 +94,7 @@ public class MainVerticle extends AbstractVerticle {
 		)));
 		Actor4jService.deployPods(
 			() -> new CurrencyServiceActorPod(), 
-			new PodConfiguration("CurrencyService", CurrencyServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(
 				User.ROLE_PUBLIC, Set.of( 
 					PodRequestMethod.GET_ALL, 
@@ -102,33 +102,33 @@ public class MainVerticle extends AbstractVerticle {
 			)));
 		Actor4jService.deployPods(
 			() -> new PaymentServiceActorPod(), 
-			new PodConfiguration("PaymentService", PaymentServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.denyAll());
 		Actor4jService.deployPods(
 			() -> new ShippingServiceActorPod(), 
-			new PodConfiguration("ShippingService", ShippingServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(
 				User.ROLE_PUBLIC, Set.of(PodRequestMethod.ACTION_1)
 		)));
 		Actor4jService.deployPods(
 			() -> new EmailServiceActorPod(), 
-			new PodConfiguration("EmailService", EmailServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.denyAll());
 		Actor4jService.deployPods(
 			() -> new CheckoutServiceActorPod(), 
-			new PodConfiguration("CheckoutService", CheckoutServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(  
 				User.ROLE_PUBLIC, Set.of(PodRequestMethod.POST)
 		)));
 		Actor4jService.deployPods(
 			() -> new RecomendationServiceActorPod(), 
-			new PodConfiguration("RecomendationService", RecomendationServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(
 				User.ROLE_PUBLIC, Set.of(PodRequestMethod.GET_ALL)
 		)));
 		Actor4jService.deployPods(
 			() -> new AdServiceActorPod(), 
-			new PodConfiguration("AdService", AdServiceActorPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(  
 				User.ROLE_PUBLIC, Set.of(
 					PodRequestMethod.GET_ALL,
@@ -138,7 +138,7 @@ public class MainVerticle extends AbstractVerticle {
 		
 		Actor4jService.deployPods(
 			() -> new RecomendationServiceFunctionPod(), 
-			new PodConfiguration("RecomendationServiceAsFunction", RecomendationServiceFunctionPod.class.getName(), MIN_REPLICA, MAX_REPLICA),
+			new PodDeployment(MIN_REPLICA, MAX_REPLICA),
 			PodPolicy.allow(Map.of(  
 				User.ROLE_PUBLIC, Set.of(PodRequestMethod.GET_ALL)
 		)));

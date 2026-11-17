@@ -1,9 +1,9 @@
 <template>
-	<v-row justify="center"> 
+	<v-row class="justify-center"> 
 	<v-dialog v-model="show" persistent max-width="600px">
 		<v-card> 
 			<v-card-title> 
-				<span class="text-h5">Login required</span> 
+				<span class="text-headline-small">Login required</span> 
 			</v-card-title> 
 			<v-card-text>
 				<v-form ref="loginForm">
@@ -22,8 +22,8 @@
 			</v-card-text> 
 			<v-card-actions> 
 				<v-spacer></v-spacer>
-				<v-btn color="blue darken-1" text @click="login">Ok</v-btn>
-				<v-btn color="blue darken-1" text @click="show=false;$router.push({name: 'Home'})">Cancel</v-btn>
+				<v-btn color="blue-darken-1" variant="text" @click="login">Ok</v-btn>
+				<v-btn color="blue-darken-1" variant="text" @click="show=false;$router.push({name: 'Home'})">Cancel</v-btn>
 			</v-card-actions> 
 		</v-card> 
 	</v-dialog> 
@@ -33,12 +33,15 @@
 <script>
 	import { AuthorizationService } from '@/services/AuthorizationService';
 	import { CartService } from '@/services/CartService';
+	import { mapStores } from 'pinia';
+	import { useMainStore } from '@/stores/main';
 	
 	export default {
 		name: "LoginDialog",
 		props: {
 			visible: Boolean,
 		},
+		emits: ['close'],
 		data() {
 			return {
 				username: '',
@@ -55,6 +58,7 @@
 			}
 		},
 		computed: {
+			...mapStores(useMainStore),
 			show: {
 				get() {
 					return this.visible;
@@ -66,32 +70,33 @@
 			}
 		},
 		methods: {
-			login() {
-				if (this.$refs.loginForm.validate()) {
+			async login() {
+				const { valid } = await this.$refs.loginForm.validate();
+				if (valid) {
 					let credentials = {
-						username: this.$store.state.user.sid,
+						username: this.mainStore.user.sid,
 						password: this.password
 					};
 										
 					AuthorizationService.post(credentials)
 					.then(response => {
-						this.$store.state.user.auth = response.data.data;
-						this.$store.state.user.prefered_username = this.username;
+						this.mainStore.user.auth = response.data.data;
+						this.mainStore.user.prefered_username = this.username;
 						
-						if (this.$store.state.user.cart_unauthenticated.items.length>0) {
-							let cartItems = this.$store.state.user.cart_unauthenticated.items;
+						if (this.mainStore.user.cart_unauthenticated.items.length>0) {
+							let cartItems = this.mainStore.user.cart_unauthenticated.items;
 							
 							var promises = [];
 							for (let i = 0; i < cartItems.length; i++)
-								promises.push(CartService.post(cartItems[i], this.$store.state.user.auth));
+								promises.push(CartService.post(cartItems[i], this.mainStore.user.auth));
 							Promise.all(promises).then(() => {
-								this.$store.state.user.cart_unauthenticated.items = [];
-								localStorage.setItem("user", JSON.stringify(this.$store.state.user));
+								this.mainStore.user.cart_unauthenticated.items = [];
+								localStorage.setItem("user", JSON.stringify(this.mainStore.user));
 								this.show=false;
 							});
 						}
 						else {
-							localStorage.setItem("user", JSON.stringify(this.$store.state.user));
+							localStorage.setItem("user", JSON.stringify(this.mainStore.user));
 							this.show=false;
 						}
 					})

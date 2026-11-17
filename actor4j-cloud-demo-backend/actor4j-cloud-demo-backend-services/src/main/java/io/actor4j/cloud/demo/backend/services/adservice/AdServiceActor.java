@@ -28,7 +28,7 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
-import io.vertx.core.json.JsonArray;
+import io.actor4j.core.json.JsonArray;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -85,7 +85,7 @@ public class AdServiceActor extends PodChildActor {
 			if (list!=null)
 				result = Utils.mapFrom(list);
 			else
-				result = new JsonArray();
+				result = JsonArray.create();
 		}
 		else if (message.tag()==QRY_RANDOM_ADS)
 			result = Utils.mapFrom(getRandomAds());

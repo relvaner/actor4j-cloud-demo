@@ -7,30 +7,19 @@
 	</parent>
 	<artifactId>actor4j-cloud-demo-shared</artifactId>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-dependencies</artifactId>
-				<version>${vertx.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>io.vertx</groupId>
-			<artifactId>vertx-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
+<dependencies>
+<dependency>
 			<groupId>io.actor4j</groupId>
 			<artifactId>actor4j-core-sdk</artifactId>
 			<version>${actor4j.core.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- implementation of the JSON of actor4j (JsonObject, JsonArray, ObjectMapper) -->
+		<dependency>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-dataformat-json-jackson</artifactId>
+			<version>${actor4j.version}</version>
 		</dependency>
 	</dependencies>
 </project>

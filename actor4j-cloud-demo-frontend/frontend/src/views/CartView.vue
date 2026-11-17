@@ -11,7 +11,7 @@
 		<v-row>
 			<v-col></v-col>
 			<v-col cols="12" md="6" lg="4">
-				<v-card outlined v-if="costsLoaded">
+				<v-card variant="outlined" v-if="costsLoaded">
 					<v-card-text>
 						<h3>Shipping Cost: {{ currency }} {{ shippingCost }}</h3>
 						<br>
@@ -38,7 +38,7 @@
 		<v-row>
 			<v-col></v-col>
 			<v-col cols="12" md="6" lg="4">
-				<v-card outlined>
+				<v-card variant="outlined">
 					<v-card-text>
 						<h2>Checkout</h2>
 					</v-card-text>
@@ -97,9 +97,9 @@
 		
 		<v-row v-if="recommendedProductsLoaded">
 			<v-col xs="12" sm="6" md="3" v-for="product in recommendedProducts" v-bind:key="product.id">
-				<v-card hover outlined @click="$router.push({name: 'Product', params: { id: product.id }});">
+				<v-card hover variant="outlined" @click="$router.push({name: 'Product', params: { id: product.id }});">
 					<v-card-text>
-						<v-img contain height="100" :src="product.picture"/>
+						<v-img height="100" :src="product.picture"/>
 						<br>
 						<h3>{{ product.name }}</h3>	
 					</v-card-text>
@@ -123,6 +123,8 @@
 	import { ShippingService } from '@/services/ShippingService';
 	import { RecomendationService } from '@/services/RecomendationService';
 	import { AdService } from '@/services/AdService';
+	import { mapStores } from 'pinia';
+	import { useMainStore } from '@/stores/main';
 
 	export default {
 		name: 'CartView',
@@ -179,20 +181,23 @@
 				ad: ''
 			}
 		},
+		computed: {
+			...mapStores(useMainStore)
+		},
 		created() {
 			this.initialize();
 		},
 		methods: {
 			emptyCart() {
-				if (this.$store.state.user.auth==null) {
-					this.$store.state.user.cart_unauthenticated.items = [];
+				if (this.mainStore.user.auth==null) {
+					this.mainStore.user.cart_unauthenticated.items = [];
 					
-					localStorage.setItem("user", JSON.stringify(this.$store.state.user));
+					localStorage.setItem("user", JSON.stringify(this.mainStore.user));
 					
 					this.$router.push({name: 'Home'});
 				}
 				else
-					CartService.del(this.$store.state.user.auth)
+					CartService.del(this.mainStore.user.auth)
 					.then(() => {
 						this.$router.push({name: 'Home'});
 					})
@@ -203,16 +208,17 @@
 							const stop = this.$watch('showLoginDialog', () => resolve(stop));
 						})
 						.then(() => {
-							CartService.del(this.$store.state.user.auth)
+							CartService.del(this.mainStore.user.auth)
 							.then(() => {
 								this.$router.push({name: 'Home'});
 							})
 						});
 					});		
 			},
-			placeOrder() {
-				if (this.$refs.checkoutForm.validate()) {
-					if (this.$store.state.user.auth==null) {
+			async placeOrder() {
+				const { valid } = await this.$refs.checkoutForm.validate();
+				if (valid) {
+					if (this.mainStore.user.auth==null) {
 						this.showLoginDialog = true;
 						new Promise(resolve => {
 							const stop = this.$watch('showLoginDialog', () => resolve(stop));
@@ -227,7 +233,7 @@
 			},
 			placeOrder_subroutine() {
 				if (this.cart.items.length>0) {
-					this.$store.state.order = {
+					this.mainStore.order = {
 						'user_currency': this.currency,
 						'address': this.address,
 						'email': this.email,
@@ -244,7 +250,7 @@
 				return product !== undefined ? product : null;
 			},
 			moneyAsString(money) {
-				return money.units.toString() + '.' + money.nanos.toString().substr(0, 2);
+				return money.units.toString() + '.' + money.nanos.toString().substring(0, 2);
 			},
 			calculateCosts() {
 				this.costsLoaded = false;
@@ -276,12 +282,12 @@
 				ProductCatalogService.getAll()
 				.then(response => {
 					this.productCatalog = response.data.data;
-					this.loadCart(this.$store.state.user.auth);
+					this.loadCart(this.mainStore.user.auth);
 				});
 			},
 			loadCart(auth) {
-				if (this.$store.state.user.auth==null) {
-					this.cart = this.$store.state.user.cart_unauthenticated;
+				if (this.mainStore.user.auth==null) {
+					this.cart = this.mainStore.user.cart_unauthenticated;
 					this.cartLoaded = true;
 					
 					if (this.cart.items !== undefined) {

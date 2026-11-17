@@ -35,7 +35,7 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.utils.Reply;
-import io.vertx.core.json.JsonArray;
+import io.actor4j.core.json.JsonArray;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -62,19 +62,25 @@ public class RecomendationServiceFunctionImpl {
 		
 		logger().log(DEBUG, String.format("[%s] %s", context.domain(), message.value()));
 		
-		Function<JsonArray, Reply> handler = handlerMap.get(interaction);
-		if (handler!=null && message.value()!=null && message.value() instanceof JsonArray) {
-			result = handler.apply((JsonArray)message.value());
-			handlerMap.remove(interaction);
+		// the replies carry the interaction, so the proxy answers the pending request and not the product catalog
+		Function<JsonArray, Reply> handler = handlerMap.remove(interaction);
+		if (handler!=null) {
+			if (message.value() instanceof JsonArray array)
+				result = handler.apply(array);
+			else
+				result = Reply.failure(message.value(), message.tag()>=PodStatus.BAD_REQUEST ? message.tag() : PodStatus.INTERNAL_SERVER_ERROR, interaction);
 		}
-		else if (message.tag()==PodRequestMethod.GET_ALL && message.value()!=null && message.value() instanceof JsonArray) {
+		else if (message.tag()==PodRequestMethod.GET_ALL && message.value() instanceof JsonArray product_ids) {
 			handlerMap.put(interaction, (array) -> {
-				return Reply.of(generateRecomendations((JsonArray)message.value(), array), PodStatus.OK);
+				return Reply.of(generateRecomendations(product_ids, array), PodStatus.OK, interaction);
 			});
 			host.tell(null, PodRequestMethod.GET_ALL, PodAlias.ProductCatalogService, interaction, null, context.domain());
+			result = Reply.pending();
 		}
+		else if (message.tag()==PodRequestMethod.GET_ALL)
+			result = Reply.failure("Array of product ids expected", PodStatus.BAD_REQUEST);
 		else
-			result = Reply.of(null, PodStatus.METHOD_NOT_ALLOWED);
+			result = Reply.failure(null, PodStatus.METHOD_NOT_ALLOWED);
 		
 		return result;
 	}

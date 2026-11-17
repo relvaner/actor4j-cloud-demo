@@ -17,7 +17,6 @@
 package io.actor4j.cloud.demo.single.instance.utils;
 
 import io.actor4j.core.pods.RemotePodMessageDTO;
-import io.actor4j.core.pods.utils.PodStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.ReplyException;
@@ -46,23 +45,25 @@ public class PodRequestHandler implements Handler<RoutingContext> {
 		
 		RemotePodMessageDTO remotePodMessageDTO = null;
 		try {
-			remotePodMessageDTO = bodyAsJson.mapTo(RemotePodMessageDTO.class);
+			if (bodyAsJson!=null && PodApiMapper.normalize(bodyAsJson))
+				remotePodMessageDTO = bodyAsJson.mapTo(RemotePodMessageDTO.class);
 		}
 		catch (IllegalArgumentException e) {
 			rc.fail(e);
+			return;
 		}
 		if (remotePodMessageDTO!=null && remotePodMessageDTO.alias()!=null && !remotePodMessageDTO.alias().isEmpty()) {
 			if (rc.get(PodHttpHeaders.X_POD_DOMAIN).equals(remotePodMessageDTO.alias()) && rc.get(PodHttpHeaders.X_POD_REQUEST_METHOD).equals(remotePodMessageDTO.tag())) {
 				bodyAsJson.put("principal", podAuthHandler.getPrincipal());
 				
 				if (remotePodMessageDTO.reply())
-					vertx.eventBus().<Object>request("actors", bodyAsJson, response -> {
+					vertx.eventBus().<Object>request("actors", bodyAsJson).onComplete(response -> {
 						if (response.succeeded()) {
 							JsonObject obj = (JsonObject)response.result().body();
-							int statusCode = obj.getInteger("status");
-							
-							rc.response().end(JsonObject.mapFrom(new RESTDefaultResponse(
-									RESTDefaultResponse.SUCCESS, 200, new Pod(statusCode, PodStatus.getStatus(statusCode)), obj.getValue("payload"), "")).encodePrettily());
+							// a pod status 4xx or 5xx becomes the HTTP status, the details stay in pod
+							RESTDefaultResponse answer = PodApiMapper.response(obj.getInteger("status"), obj.getValue("payload"));
+							rc.response().setStatusCode(answer.getStatus());
+							rc.response().end(JsonObject.mapFrom(answer).encodePrettily());
 						}
 						else
 							rc.fail(((ReplyException)response.cause()).failureCode());

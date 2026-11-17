@@ -15,16 +15,16 @@
  */
 package io.actor4j.cloud.demo.backend.services.currencyservice;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.immutable.ImmutableMap;
+import io.actor4j.core.json.ObjectMapper;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.GenericType;
 
 public class CurrencyServiceResourceActor extends ResourceActor {
 	@Override
@@ -35,9 +35,9 @@ public class CurrencyServiceResourceActor extends ResourceActor {
 	public Map<String, String> loadCurrencyData() {
 		Map<String, String> result = null;
 		
-		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = ObjectMapper.create();
 		try {
-			result = objectMapper.readValue(new File("data/currency_conversion.json"), new TypeReference<Map<String,String>>() {});
+			result = objectMapper.mapTo(Files.readString(Path.of("data/currency_conversion.json")), new GenericType<Map<String,String>>() {});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.mutable.MutableObject;
+import io.actor4j.core.mutable.MutableBoolean;
+import io.actor4j.core.mutable.MutableInt;
+import io.actor4j.core.mutable.MutableObject;
 
 public class DefaultGlobal {
 	public static final MutableBoolean ACTOR4J_CLOUD_DOCKER = new MutableBoolean(false);

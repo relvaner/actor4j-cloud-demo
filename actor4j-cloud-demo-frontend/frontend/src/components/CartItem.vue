@@ -1,11 +1,11 @@
 <template>
 	<div id="cart_item">
-		<v-card outlined>
+		<v-card variant="outlined">
 			<v-card-text v-if="product !== null">
 				<v-container>
 					<v-row>
 						<v-col xs="12" sm="6">
-							<v-img contain :src="product.picture" @click="$router.push({name: 'Product', params: { id: product.id }})"/>
+							<v-img :src="product.picture" @click="$router.push({name: 'Product', params: { id: product.id }})"/>
 						</v-col>
 						<v-col xs="12" sm="6">
 							<br>
@@ -37,7 +37,7 @@ export default {
 	},
 	created() {
 		if (this.product !== null)
-			this.price = this.product.price_usd.units.toString() + '.' + this.product.price_usd.nanos.toString().substr(0, 2);
+			this.price = this.product.price_usd.units.toString() + '.' + this.product.price_usd.nanos.toString().substring(0, 2);
 	},
 	methods: {
   }

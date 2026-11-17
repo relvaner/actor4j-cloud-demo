@@ -7,23 +7,17 @@
 	</parent>
 	<artifactId>actor4j-cloud-demo-backend-utils</artifactId>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-dependencies</artifactId>
-				<version>${vertx.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	
-	<dependencies>
+<dependencies>
 		<dependency>
-			<groupId>io.vertx</groupId>
-			<artifactId>vertx-core</artifactId>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-cloud-demo-shared</artifactId>
+			<version>${revision}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-core-sdk</artifactId>
+			<version>${actor4j.core.version}</version>
 			<scope>provided</scope>
 		</dependency>
-	</dependencies>
+</dependencies>
 </project>

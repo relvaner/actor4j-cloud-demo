@@ -5,7 +5,7 @@
 			<v-col xs="12" md="6" lg="4">
 				<v-card v-if="productLoaded">
 					<v-card-text>
-						<v-img height="400" :src="product.picture"/>
+						<v-img cover height="400" :src="product.picture"/>
 						<br>
 						<h3>{{ product.name }}</h3>
 						<p>{{ currency }} {{ price }}</p>
@@ -39,9 +39,9 @@
 		
 		<v-row v-if="recommendedProductsLoaded">
 			<v-col xs="12" sm="6" md="3" v-for="product in recommendedProducts" v-bind:key="product.id">
-				<v-card hover outlined @click="$router.push({name: 'Product', params: { id: product.id }});load(product.id);">
+				<v-card hover variant="outlined" @click="$router.push({name: 'Product', params: { id: product.id }});load(product.id);">
 					<v-card-text>
-						<v-img contain height="100" :src="product.picture"/>
+						<v-img height="100" :src="product.picture"/>
 						<br>
 						<h3>{{ product.name }}</h3>	
 					</v-card-text>
@@ -63,6 +63,8 @@
 	import { AdService } from '@/services/AdService';
 	import { CartService } from '@/services/CartService';
 	import LoginDialog from "@/dialogs/LoginDialog.vue";
+	import { mapStores } from 'pinia';
+	import { useMainStore } from '@/stores/main';
 
 	export default {
 		name: 'ProductView',
@@ -86,6 +88,9 @@
 				ad: ''
 			}
 		},
+		computed: {
+			...mapStores(useMainStore)
+		},
 		created() {
 			this.load(this.$route.params.id);
 		},
@@ -97,7 +102,7 @@
 				ProductCatalogService.get(id)
 				.then(response => {
 					this.product = response.data.data;
-					this.price = this.product.price_usd.units.toString() + '.' + this.product.price_usd.nanos.toString().substr(0, 2);
+					this.price = this.product.price_usd.units.toString() + '.' + this.product.price_usd.nanos.toString().substring(0, 2);
 					this.productLoaded = true;
 				});
 				
@@ -127,20 +132,20 @@
 					'quantity': 1
 				};
 			
-				if (this.$store.state.user.auth==null) {
-					let items = this.$store.state.user.cart_unauthenticated.items;
+				if (this.mainStore.user.auth==null) {
+					let items = this.mainStore.user.cart_unauthenticated.items;
 					let foundIndex = items.findIndex(item => cartItem.product_id === item.product_id);
 					if (foundIndex>=0)
-						this.$store.state.user.cart_unauthenticated.items[foundIndex].quantity += 1;
+						this.mainStore.user.cart_unauthenticated.items[foundIndex].quantity += 1;
 					else
-						this.$store.state.user.cart_unauthenticated.items.push(cartItem);
+						this.mainStore.user.cart_unauthenticated.items.push(cartItem);
 						
-					localStorage.setItem("user", JSON.stringify(this.$store.state.user));
+					localStorage.setItem("user", JSON.stringify(this.mainStore.user));
 						
 					this.$router.push({name: 'Cart'});
 				}
 				else
-					CartService.post(cartItem, this.$store.state.user.auth)
+					CartService.post(cartItem, this.mainStore.user.auth)
 					.then( () => {
 						this.$router.push({name: 'Cart'});
 					})
@@ -151,7 +156,7 @@
 							const stop = this.$watch('showLoginDialog', () => resolve(stop));
 						})
 						.then(() => {
-							CartService.post(cartItem, this.$store.state.user.auth)
+							CartService.post(cartItem, this.mainStore.user.auth)
 							.then( () => {
 								this.$router.push({name: 'Cart'});
 							});

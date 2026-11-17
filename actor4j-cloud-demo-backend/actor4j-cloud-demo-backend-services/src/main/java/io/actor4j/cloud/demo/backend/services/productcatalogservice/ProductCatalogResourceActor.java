@@ -15,14 +15,14 @@
  */
 package io.actor4j.cloud.demo.backend.services.productcatalogservice;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedList;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.actor4j.cloud.demo.backend.services.shared.ProductDTO;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.json.ObjectMapper;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ProductCatalogResourceActor extends ResourceActor {
@@ -34,9 +34,9 @@ public class ProductCatalogResourceActor extends ResourceActor {
 	public ProductCatalogDTO loadProductCatalog() {
 		ProductCatalogDTO result = null;
 		
-		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = ObjectMapper.create();
 		try {
-			result = objectMapper.readValue(new File("data/products.json"), ProductCatalogDTO.class);
+			result = objectMapper.mapTo(Files.readString(Path.of("data/products.json")), ProductCatalogDTO.class);
 
 			if (result!=null) {
 				String contextPath = getContextPath();

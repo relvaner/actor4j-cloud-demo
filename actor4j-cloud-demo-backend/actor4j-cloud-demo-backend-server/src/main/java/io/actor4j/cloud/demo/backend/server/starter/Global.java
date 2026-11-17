@@ -20,9 +20,8 @@ import java.util.Base64;
 
 import javax.crypto.SecretKey;
 
-import org.apache.commons.lang3.mutable.MutableObject;
-
 import io.actor4j.cloud.demo.single.instance.starter.DefaultGlobal;
+import io.actor4j.core.mutable.MutableObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 

@@ -32,10 +32,8 @@ public class ServerVerticle extends AbstractVerticle {
 		
 		if (!Global.ACTOR4J_CLOUD_CONTEXT_PATH.getValue().isEmpty()) {
 			mainRouter = Router.router(vertx);
-			mainRouter.mountSubRouter(Global.ACTOR4J_CLOUD_CONTEXT_PATH.getValue(), router);
-			
-			// https://github.com/vert-x3/vertx-web/blob/master/vertx-web/src/test/java/io/vertx/ext/web/SubRouterTest.java
-			// mainRouter.route(Global.ACTOR4J_CLOUD_CONTEXT_PATH.getValue()).subRouter(router);
+			// Vert.x 5: mountSubRouter is gone
+			mainRouter.route(Global.ACTOR4J_CLOUD_CONTEXT_PATH.getValue()+"/*").subRouter(router);
 		}
 		
 		// @See: https://www.javadoc.io/doc/io.vertx/vertx-web/3.9.10/io/vertx/ext/web/handler/CookieHandler.html

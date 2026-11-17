@@ -39,7 +39,8 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.utils.PodRequestMethod;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.runtime.embedded.InternalEmbeddedActorCell;
-import io.vertx.core.json.JsonObject;
+import io.actor4j.core.json.JsonObject;
+import io.actor4j.cloud.demo.shared.utils.Json;
 
 public class CheckoutEmbeddedActor extends EmbeddedActor {
 	protected PodContext context;
@@ -71,7 +72,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 		if (user!=null && user.principal()!=null) {
 			if (message.tag()==PodRequestMethod.POST && message.value()!=null && message.value() instanceof JsonObject) {
 				try {
-					OrderDTO order = ((JsonObject)message.value()).mapTo(OrderDTO.class);
+					OrderDTO order = Json.mapTo((JsonObject)message.value(), OrderDTO.class);
 					if (order!=null) {
 						done = false;
 						placeOrder(order, user, message.source(), message.interaction());
@@ -145,7 +146,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 					break;
 				default: {
 					done = true;
-					host().tell(JsonObject.mapFrom(OrderResultDTO.of(orderResult)), PodStatus.OK, podHandler, interaction);
+					host().tell(Json.from(OrderResultDTO.of(orderResult)), PodStatus.OK, podHandler, interaction);
 				}
 			}
 			
@@ -172,7 +173,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 				}
 				
 				try {
-					cart = ((JsonObject)msg.value()).mapTo(CartDTO.class);
+					cart = Json.mapTo((JsonObject)msg.value(), CartDTO.class);
 					if (cart!=null)
 						done = false;
 					else
@@ -205,7 +206,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 				
 				if (msg.tag()==PodStatus.OK && msg.value()!=null && msg.value() instanceof JsonObject) {
 					try {
-						ProductDTO product = ((JsonObject)msg.value()).mapTo(ProductDTO.class);
+						ProductDTO product = Json.mapTo((JsonObject)msg.value(), ProductDTO.class);
 						if (product!=null) {
 							done = false;
 							orderResult.items.add(new OrderItem(item, product.price_usd()));
@@ -237,7 +238,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	
 	protected void convertProductPrices(OrderDTO order, ActorId podHandler, UUID interaction) {
 		if (orderResult.items.size()>0)
-			host().tell(JsonObject.mapFrom(new ConvertDTO(orderResult.items.get(0).cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
+			host().tell(Json.from(new ConvertDTO(orderResult.items.get(0).cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
 		
 		for (int i=orderResult.items.size()-1; i>=0; i--) {
 			OrderItem item = orderResult.items.get(i);
@@ -248,7 +249,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 				
 				if (msg.tag()==PodStatus.OK && msg.value()!=null && msg.value() instanceof JsonObject) {
 					try {
-						MoneyDTO money = ((JsonObject)msg.value()).mapTo(MoneyDTO.class);
+						MoneyDTO money = Json.mapTo((JsonObject)msg.value(), MoneyDTO.class);
 						if (money!=null) {
 							done = false;
 							orderResult.items.set(index, new OrderItem(item.item(), money));
@@ -265,7 +266,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 					host().tell(context.domain()+"_013", PodStatus.INTERNAL_SERVER_ERROR, podHandler, interaction);
 				
 				if (index<orderResult.items.size()-1)
-					host().tell(JsonObject.mapFrom(new ConvertDTO( orderResult.items.get(index+1).cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
+					host().tell(Json.from(new ConvertDTO( orderResult.items.get(index+1).cost(), order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
 				next();
 				
 				return done;
@@ -274,14 +275,14 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	}
 	
 	protected void quoteShipping(OrderDTO order, ActorId podHandler, UUID interaction) {
-		host().tell(JsonObject.mapFrom(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.ACTION_1, PodAlias.ShippingService, interaction, null, context.domain());
+		host().tell(Json.from(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.ACTION_1, PodAlias.ShippingService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.ShippingService), (msg) -> {
 			boolean done = true;
 			
 			if (msg.tag()==PodStatus.OK && msg.value()!=null && msg.value() instanceof JsonObject) {
 				try {
-					MoneyDTO money = ((JsonObject)msg.value()).mapTo(MoneyDTO.class);
+					MoneyDTO money = Json.mapTo((JsonObject)msg.value(), MoneyDTO.class);
 					if (money!=null) {
 						done = false;
 						orderResult.shipping_cost = money;
@@ -304,14 +305,14 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	}
 	
 	protected void convertShippingCost(OrderDTO order, ActorId podHandler, UUID interaction) {
-		host().tell(JsonObject.mapFrom(new ConvertDTO(orderResult.shipping_cost, order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
+		host().tell(Json.from(new ConvertDTO(orderResult.shipping_cost, order.user_currency())), PodRequestMethod.ACTION_1, PodAlias.CurrencyService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.CurrencyService), (msg) -> {
 			boolean done = true;
 			
 			if (msg.tag()==PodStatus.OK && msg.value()!=null && msg.value() instanceof JsonObject) {
 				try {
-					MoneyDTO money = ((JsonObject)msg.value()).mapTo(MoneyDTO.class);
+					MoneyDTO money = Json.mapTo((JsonObject)msg.value(), MoneyDTO.class);
 					if (money!=null) {
 						done = false;
 						orderResult.shipping_cost = money;
@@ -340,7 +341,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	}
 	
 	protected void chargeCreditCard(OrderDTO order, ActorId podHandler, UUID interaction) {
-		host().tell(JsonObject.mapFrom(new ChargeDTO(orderResult.total_cost, order.credit_card())), PodRequestMethod.POST, PodAlias.PaymentService, interaction, null, context.domain());
+		host().tell(Json.from(new ChargeDTO(orderResult.total_cost, order.credit_card())), PodRequestMethod.POST, PodAlias.PaymentService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.PaymentService), (msg) -> {
 			boolean done = true;
@@ -378,7 +379,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	}
 	
 	protected void shipOrder(OrderDTO order, ActorId podHandler, UUID interaction) {
-		host().tell(JsonObject.mapFrom(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.POST, PodAlias.ShippingService, interaction, null, context.domain());
+		host().tell(Json.from(new ShipOrderDTO(order.address(), cart.items())), PodRequestMethod.POST, PodAlias.ShippingService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.ShippingService), (msg) -> {
 			boolean done = true;
@@ -397,7 +398,7 @@ public class CheckoutEmbeddedActor extends EmbeddedActor {
 	}
 	
 	protected void sendConfirmationEmail(OrderDTO order, ActorId podHandler, UUID interaction) {
-		host().tell(JsonObject.mapFrom(new OrderConfirmationDTO(order.email(), OrderResultDTO.of(orderResult))), PodRequestMethod.GET, PodAlias.EmailService, interaction, null, context.domain());
+		host().tell(Json.from(new OrderConfirmationDTO(order.email(), OrderResultDTO.of(orderResult))), PodRequestMethod.GET, PodAlias.EmailService, interaction, null, context.domain());
 		
 		await((msg) -> msg.domain()!=null && msg.domain().equalsIgnoreCase(PodAlias.EmailService), (msg) -> {
 			boolean done = true;

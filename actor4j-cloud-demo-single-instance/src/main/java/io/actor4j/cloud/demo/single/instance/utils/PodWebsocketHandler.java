@@ -17,7 +17,6 @@
 package io.actor4j.cloud.demo.single.instance.utils;
 
 import io.actor4j.core.pods.RemotePodMessageDTO;
-import io.actor4j.core.pods.utils.PodStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.ReplyException;
@@ -55,10 +54,12 @@ public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 			
 			RemotePodMessageDTO remotePodMessageDTO = null;
 			try {
-				remotePodMessageDTO = bodyAsJson.mapTo(RemotePodMessageDTO.class);
+				if (bodyAsJson!=null && PodApiMapper.normalize(bodyAsJson))
+					remotePodMessageDTO = bodyAsJson.mapTo(RemotePodMessageDTO.class);
 			}
 			catch (IllegalArgumentException e) {
 				ws_fail(ws, 400, e);
+				return;
 			}
 			if (remotePodMessageDTO!=null && remotePodMessageDTO.alias()!=null && !remotePodMessageDTO.alias().isEmpty()) {
 				JsonObject principal = podAuthHandler!=null ? podAuthHandler.authenticate(remotePodMessageDTO.auth()) : null;
@@ -70,15 +71,15 @@ public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 				else
 					authority = User.ROLE_UNAUTHENTICATED;
 				
-				if (PodAuthHandler.isAuthorized(remotePodMessageDTO.alias(), authority, remotePodMessageDTO.tag())) {
+				if (PodAuthHandler.isUnknownMethod(remotePodMessageDTO.alias(), remotePodMessageDTO.tag()))
+					ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
+						RESTDefaultResponse.NO_SUCCESS, 405, new Pod(), "", "The method is not allowed for this pod!")).encodePrettily());
+				else if (PodAuthHandler.isAuthorized(remotePodMessageDTO.alias(), authority, remotePodMessageDTO.tag())) {
 					if (remotePodMessageDTO.reply())
-						vertx.eventBus().<Object>request("actors", bodyAsJson, response -> {
+						vertx.eventBus().<Object>request("actors", bodyAsJson).onComplete(response -> {
 							if (response.succeeded()) {
 								JsonObject obj = (JsonObject)response.result().body();
-								int statusCode = obj.getInteger("status");
-								
-								ws_end(ws, JsonObject.mapFrom(new RESTDefaultResponse(
-										RESTDefaultResponse.SUCCESS, 200, new Pod(statusCode, PodStatus.getStatus(statusCode)), obj.getValue("payload"), "")).encodePrettily());
+								ws_end(ws, JsonObject.mapFrom(PodApiMapper.response(obj.getInteger("status"), obj.getValue("payload"))).encodePrettily());
 							}
 							else
 								ws_fail(ws, ((ReplyException)response.cause()).failureCode(), null);
@@ -123,7 +124,4 @@ public class PodWebsocketHandler implements Handler<ServerWebSocket> {
 					RESTDefaultResponse.ERROR, 400, new Pod(), e!=null ? e.getMessage() : "", "The request was error prone.")).encodePrettily());
 	}
 	
-	public void ws_reject(ServerWebSocket ws, int status) {
-		ws.reject(status);
-	}
 }
