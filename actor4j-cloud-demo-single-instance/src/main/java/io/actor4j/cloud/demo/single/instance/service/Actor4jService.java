@@ -67,9 +67,11 @@ public class Actor4jService {
 	public static void start(Vertx vertx, Database<?> database) {
 		if (service==null) {
 			// JSON of actor4j as message value (the classes of the implementation on the classpath)
-			ActorMessageUtils.SUPPORTED_TYPES.add(JsonObject.create().getClass());
-			ActorMessageUtils.SUPPORTED_TYPES.add(JsonArray.create().getClass());
-			ActorMessageUtils.SUPPORTED_TYPES.add(SecretKeySpec.class);
+			ActorMessageUtils.registerSupportedType(
+				JsonObject.create().getClass(),
+				JsonArray.create().getClass(),
+				SecretKeySpec.class
+			);
 			
 			// replyTo is the Vert.x message of the request (Actor4jVerticle), the answer goes back with reply
 			InternalServerCallback internalServerCallback = (replyTo, result, tag) -> {
